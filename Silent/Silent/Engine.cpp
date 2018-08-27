@@ -2,20 +2,17 @@
 
 namespace Silent::Engine
 {
-	SDL_Window * window;
 	std::shared_ptr<Backend> backend;
 
-	void InitEngine(int _backend)
+	void InitEngine()
 	{
-		if (_backend == BACKEND_GL) backend = std::make_shared<BackendGL>();
+#if defined BACKEND_SDL_GL
+		backend = std::make_shared<BackendSDLGL>();
+#elif defined BACKEND_DEFAULT
+		backend = std::make_shared<BackendSDLGL>();
+#endif // BACKEND_SDL_GL
 
-		// Init SDL
-		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-		{
-			printf("SDL Error: %s\n", SDL_GetError());
-		}
-
-		backend->Init(window);
+		backend->Init();
 		backend->SettingsInit();
 	}
 
@@ -24,26 +21,58 @@ namespace Silent::Engine
 		bool done = false;
 		while (!done)
 		{
-			SDL_Event event;
-			while (SDL_PollEvent(&event))
-			{
-				ImGui_ImplSDL2_ProcessEvent(&event);
-				if (event.type == SDL_QUIT)
-					done = true;
-			}
+			done = backend->UpdateEvent();
 			backend->Update();
-			ImGui_ImplSDL2_NewFrame(window);
-			ImGui::NewFrame();
 
- 			backend->Render(window);
+			Systems::Update();
+			Systems::Execute();
+
+			bool a = true;
+			ImGui::ShowDemoWindow(&a);
+
+			ImGui::Begin("test", &a);
+			if (ImGui::CollapsingHeader("Entity"))
+			{
+				auto ent = Entities::GetAll();
+				static std::string currentEntityName{ "" };
+				static EntityID currentID = -1;
+				static Entity* currentEntity;
+				if (ImGui::BeginCombo("##Entity", currentEntityName.c_str()))
+				{
+					for (auto& e : ent)
+					{
+						std::string entityName = e->GetCommon().name;
+						EntityID id = e->GetID();
+						bool selected = (currentID = id);
+						ImGui::PushID((int) id);
+						if (ImGui::Selectable(entityName.c_str(), selected))
+						{
+							currentEntityName = entityName;
+							currentID = id;
+							currentEntity = e;
+						}
+						if (selected)
+						{
+							ImGui::SetItemDefaultFocus();
+						}
+						ImGui::PopID();
+					}
+					ImGui::EndCombo();
+				}
+				if (currentEntity)
+				{
+					currentEntity->GUI();
+				}
+			}
+			ImGui::End();
+
+ 			backend->Render();
 		}
 	}
 
 	void Cleanup()
 	{
+		Resources::CleanupResources();
 		backend->Cleanup();
-
-		SDL_DestroyWindow(window);
-		SDL_Quit();
 	}
 }

@@ -13,10 +13,11 @@ public:
 	Backend();
 	virtual ~Backend();
 
-	virtual void Init(SDL_Window *& window) = 0;
+	virtual void Init() = 0;
 	virtual void SettingsInit() = 0;
+	virtual bool UpdateEvent() = 0;
 	virtual void Update() = 0;
 	virtual void Clear() = 0;
-	virtual void Render(SDL_Window * window) = 0;
+	virtual void Render() = 0;
 	virtual void Cleanup() = 0;
 };

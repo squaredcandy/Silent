@@ -128,8 +128,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Backend.h" />
-    <ClInclude Include="BackendGL.h" />
+    <ClInclude Include="BackendSDLGL.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="Entities.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="ext\assimp\ai_assert.h" />
     <ClInclude Include="ext\assimp\anim.h" />
     <ClInclude Include="ext\assimp\BaseImporter.h" />
@@ -488,7 +490,18 @@
     <ClInclude Include="ext\SDL\SDL_version.h" />
     <ClInclude Include="ext\SDL\SDL_video.h" />
     <ClInclude Include="ext\stb_image.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="ModCommon.h" />
+    <ClInclude Include="Mods.h" />
+    <ClInclude Include="ModTransform.h" />
+    <ClInclude Include="Module.h" />
+    <ClInclude Include="Random.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="Resources.h" />
     <ClInclude Include="Settings.h" />
+    <ClInclude Include="System.h" />
+    <ClInclude Include="Systems.h" />
+    <ClInclude Include="TestSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ext\assimp\color4.inl" />
@@ -613,8 +626,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Backend.cpp" />
-    <ClCompile Include="BackendGL.cpp" />
+    <ClCompile Include="BackendSDLGL.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="Entities.cpp" />
     <ClCompile Include="ext\FastNoise\FastNoise.cpp" />
     <ClCompile Include="ext\glm\detail\glm.cpp" />
     <ClCompile Include="ext\GL\gl3w.c" />
@@ -626,7 +640,11 @@
     <ClCompile Include="ext\ImGui\imgui_impl_sdl.cpp" />
     <ClCompile Include="ext\lodepng\lodepng.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Random.cpp" />
+    <ClCompile Include="Resources.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Systems.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
