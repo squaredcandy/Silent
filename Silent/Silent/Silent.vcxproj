@@ -502,6 +502,7 @@
     <ClInclude Include="System.h" />
     <ClInclude Include="Systems.h" />
     <ClInclude Include="TestSystem.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ext\assimp\color4.inl" />
@@ -645,6 +646,7 @@
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Systems.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

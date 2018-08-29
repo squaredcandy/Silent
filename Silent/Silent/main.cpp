@@ -7,6 +7,7 @@ void LoadResources()
 {
 	using namespace Silent::Engine;
 	Resources::LoadResourceFromFile<Mesh>("box", "box_export.FBX");
+	Resources::LoadResourceFromFile<Texture>("d", "");
 	Systems::AddSystem<TestSystem>();
 	Entities::AddEntity("Test");
 
