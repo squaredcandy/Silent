@@ -3,6 +3,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "Log.h"
+
 // namespace Wanderer::Engine::Textures
 // {
 // 	std::map<std::string, Material> materials;
@@ -200,13 +202,13 @@ void Texture::LoadTexture2D(std::string fileName)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		const std::string& f(fileName);
-		std::cout << "Texture Loaded: " << 
-			f.substr(f.find_last_of('/') + 1) << std::endl;
+		LOG_INFO("Texture loaded: %s", f.substr(f.find_last_of('/') + 1));
+		//std::cout << "Texture Loaded: " << f.substr(f.find_last_of('/') + 1) << std::endl;
 	}
 	else
 	{
-		std::cout << "ERROR :: TEXTURE " << fileName
-			<< " :: Texture not loaded" << std::endl;
+		LOG_ERROR("Texture not loaded: %s", fileName);
+		//std::cout << "ERROR :: TEXTURE " << fileName << " :: Texture not loaded" << std::endl;
 	}
 	stbi_image_free(data);
 }

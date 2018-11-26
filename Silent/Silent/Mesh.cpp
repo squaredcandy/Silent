@@ -1,5 +1,7 @@
 #include "Mesh.h"
 
+#include "Log.h"
+
 void Mesh::InitBuffer()
 {
 	// Create and bind vertex and index data
@@ -192,11 +194,11 @@ void Mesh::LoadModel(std::string path)
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || 
 		!scene->mRootNode)
 	{
-		printf("ERROR :: ASSIMP :: %s\n", importer.GetErrorString());
+		LOG_ERROR("ERROR :: ASSIMP :: %s\n", importer.GetErrorString());
 		return;
 	}
 	ProcessNode(scene->mRootNode, scene);
-	printf("Model Loaded: %s\n", path.substr(path.find_last_of('/') + 1).c_str());
+	LOG_INFO("Model Loaded: %s\n", path.substr(path.find_last_of('/') + 1).c_str());
 }
 
 void Mesh::Cleanup()
