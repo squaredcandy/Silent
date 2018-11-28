@@ -696,19 +696,7 @@
     <ClInclude Include="ext\ImGui\imgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ext\ImGui\imgui_freetype.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ext\ImGui\imgui_internal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ext\ImGui\stb_rect_pack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ext\ImGui\stb_textedit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ext\ImGui\stb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ext\SDL\begin_code.h">
@@ -1089,6 +1077,18 @@
     <ClInclude Include="Multithread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ext\ImGui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ext\ImGui\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ext\ImGui\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ext\ImGui\imgui_dock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ext\assimp\color4.inl">
@@ -1465,9 +1465,6 @@
     <ClCompile Include="ext\ImGui\imgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ext\ImGui\imgui_freetype.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1516,5 +1513,14 @@
     <ClCompile Include="Multithread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ext\ImGui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ext\ImGui\imgui_dock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="ext\ImGui\imgui.natvis" />
   </ItemGroup>
 </Project>

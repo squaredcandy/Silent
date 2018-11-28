@@ -7,6 +7,7 @@ using namespace nlohmann;
 #include "TestSystem.h"
 #include "Log.h"
 #include "Multithread.h"
+#include "ImGui/imgui_dock.h"
 
 #define IMGUI_NEWWINDOW ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver)
 
@@ -130,6 +131,50 @@ void Window()
 	Stats();
 
 	ConfigureSettings();
+
+	if (ImGui::Begin("tester", &a))
+	{
+		ImGui::BeginDockspace();
+
+		if (ImGui::BeginDock("Dock1"))
+		{
+			ImGui::Text("efsfsef");
+		}
+		ImGui::EndDock();
+
+		if (ImGui::BeginDock("Dock2"))
+		{
+			ImGui::Text("efsfsef");
+		}
+		ImGui::EndDock();
+
+		if (ImGui::BeginDock("Dock3"))
+		{
+			ImGui::Text("efsfsef");
+		}
+		ImGui::EndDock();
+
+		ImGui::EndDockspace();
+
+
+	}
+	ImGui::End();
+
+	if (ImGui::Begin("tester2", &a))
+	{
+		ImGui::BeginDockspace();
+
+		if (ImGui::BeginDock("Dock4"))
+		{
+			ImGui::Text("efsfsef");
+		}
+		ImGui::EndDock();
+
+		ImGui::EndDockspace();
+
+	}
+	ImGui::End();
+
 }
 
 int main(int argc, char ** argv)

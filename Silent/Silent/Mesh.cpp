@@ -182,23 +182,25 @@ void Mesh::LoadModel(std::string path)
 {
 	Assimp::Importer importer;
 	//path.insert(0, MESH_FOLDER);
-	const aiScene * scene = 
-		importer.ReadFile(path, 
-							//aiProcessPreset_TargetRealtime_MaxQuality);
-							aiProcess_Triangulate |
-							//aiProcess_FlipUVs |
-							aiProcess_CalcTangentSpace |
-							aiProcess_OptimizeMeshes | 
-							aiProcess_OptimizeGraph | 
-							aiProcess_JoinIdenticalVertices);
+	const aiScene * scene =
+		importer.ReadFile(path,
+						  //aiProcessPreset_TargetRealtime_MaxQuality);
+						  aiProcess_Triangulate |
+						  //aiProcess_FlipUVs |
+						  aiProcess_CalcTangentSpace |
+// 						  aiProcess_OptimizeMeshes |
+// 						  aiProcess_OptimizeGraph |
+						  aiProcess_JoinIdenticalVertices |
+						  aiProcess_SortByPType);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || 
 		!scene->mRootNode)
 	{
-		LOG_ERROR("ERROR :: ASSIMP :: %s\n", importer.GetErrorString());
+		LOG_ERROR("ASSIMP Error: %s\n", importer.GetErrorString());
 		return;
 	}
 	ProcessNode(scene->mRootNode, scene);
-	LOG_INFO("Model Loaded: %s\n", path.substr(path.find_last_of('/') + 1).c_str());
+	LOG_INFO("Model Loaded: %s\n", 
+			 path.substr(path.find_last_of('/') + 1).c_str());
 }
 
 void Mesh::Cleanup()

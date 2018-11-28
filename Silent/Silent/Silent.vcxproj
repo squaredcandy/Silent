@@ -86,6 +86,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)ext/freetype;$(ProjectDir)ext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)ext\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -117,6 +118,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)ext/freetype;$(ProjectDir)ext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -359,13 +361,13 @@
     <ClInclude Include="ext\GL\wglew.h" />
     <ClInclude Include="ext\ImGui\imconfig.h" />
     <ClInclude Include="ext\ImGui\imgui.h" />
-    <ClInclude Include="ext\ImGui\imgui_freetype.h" />
+    <ClInclude Include="ext\ImGui\imgui_dock.h" />
     <ClInclude Include="ext\ImGui\imgui_impl_opengl3.h" />
     <ClInclude Include="ext\ImGui\imgui_impl_sdl.h" />
     <ClInclude Include="ext\ImGui\imgui_internal.h" />
-    <ClInclude Include="ext\ImGui\stb_rect_pack.h" />
-    <ClInclude Include="ext\ImGui\stb_textedit.h" />
-    <ClInclude Include="ext\ImGui\stb_truetype.h" />
+    <ClInclude Include="ext\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="ext\ImGui\imstb_textedit.h" />
+    <ClInclude Include="ext\ImGui\imstb_truetype.h" />
     <ClInclude Include="ext\nlohmann\adl_serializer.hpp" />
     <ClInclude Include="ext\nlohmann\detail\conversions\from_json.hpp" />
     <ClInclude Include="ext\nlohmann\detail\conversions\to_chars.hpp" />
@@ -616,10 +618,11 @@
     <ClCompile Include="ext\GL\gl3w.c" />
     <ClCompile Include="ext\ImGui\imgui.cpp" />
     <ClCompile Include="ext\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="ext\ImGui\imgui_dock.cpp" />
     <ClCompile Include="ext\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="ext\ImGui\imgui_freetype.cpp" />
     <ClCompile Include="ext\ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="ext\ImGui\imgui_impl_sdl.cpp" />
+    <ClCompile Include="ext\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -630,6 +633,9 @@
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Systems.cpp" />
     <ClCompile Include="Texture.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="ext\ImGui\imgui.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
