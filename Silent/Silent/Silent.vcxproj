@@ -475,6 +475,7 @@
     <ClInclude Include="Mods.h" />
     <ClInclude Include="ModTransform.h" />
     <ClInclude Include="Module.h" />
+    <ClInclude Include="Multithread.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Resources.h" />
@@ -622,6 +623,7 @@
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Multithread.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="Scene.cpp" />

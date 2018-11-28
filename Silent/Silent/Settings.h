@@ -6,8 +6,21 @@
 #include <ImGui/imgui.h>
 #include <memory>
 
+#define SAVE_LOCATION "Save/Settings.json"
+
 #define MIN_WIDTH 800
 #define MIN_HEIGHT 600
+
+#define HEIGHT_NAME "Window_Height"
+#define WIDTH_NAME "Window_Width"
+#define VSYNC_NAME "VSync"
+#define SHOW_LOG_NAME "Show_Log"
+
+#define TRACE_COL_NAME "Trace_Color"
+#define INFO_COL_NAME "Info_Color"
+#define WARN_COL_NAME "Warn_Color"
+#define ERROR_COL_NAME "Error_Color"
+#define FATAL_COL_NAME "Fatal_Color"
 
 class Backend;
 
@@ -30,4 +43,6 @@ namespace Silent::Settings
 	extern ImVec4 clearColor;
 
 	void SettingsGUI();
+
+	void SaveSettings();
 }

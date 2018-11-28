@@ -2,6 +2,7 @@
 
 #include "Log.h"
 #include <functional>
+#include <thread>
 
 namespace Silent::Engine::Resources
 {
@@ -62,6 +63,8 @@ namespace Silent::Engine::Resources
 				}
 			}
 		}
+
+		LOG_INFO("Finished loading files");
 	}
 
 	bool ResourceLoaded(std::string str)

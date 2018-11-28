@@ -6,25 +6,23 @@ using namespace nlohmann;
 #include "Engine.h"
 #include "TestSystem.h"
 #include "Log.h"
+#include "Multithread.h"
 
 #define IMGUI_NEWWINDOW ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver)
 
 using namespace Silent::Engine;
 
-
 void LoadResources()
 {
-	//Resources::LoadResource<Mesh>("box", "box_export.FBX");
+	Multithread::CreateThread("Load Resources", Resources::LoadAllResources);
 	Systems::AddSystem<TestSystem>();
 	auto obj1 = Entities::AddEntity("Object 1");
 	Entities::AddEntity("Object 2", obj1->GetChildren());
-	
-	//auto m = Resources::GetResource<Mesh>("box");
 }
 
 void Loop()
 {
-
+	//Multithread::ManageThreads();
 }
 
 // Keep windows open
@@ -94,20 +92,25 @@ void ObjectInspector()
 	ImGui::End();
 }
 
+#define DT_LEN 50
+#include <numeric>
 void Stats()
 {
 	static Uint32 lastTime = SDL_GetTicks();
 	static Uint32 totalTime = SDL_GetTicks();
-	static Uint32 deltaTime;
+	static Uint32 deltaTimes[DT_LEN];
+	static int idx = 0;
 
 	lastTime = totalTime;
 	totalTime = SDL_GetTicks();
-	deltaTime = totalTime - lastTime;
+	deltaTimes[idx] = totalTime - lastTime;
+	idx = (idx + 1) % DT_LEN;
 
 	IMGUI_NEWWINDOW;
 	ImGui::Begin("Stats", &a);
-	ImGui::Text("Total Time: %.1fs", totalTime / 100.f);
-	ImGui::Text("Delta Time: %ums", deltaTime);
+	ImGui::Text("Total Time: %.1fs", totalTime / 1000.f);
+	auto total = std::accumulate(deltaTimes, deltaTimes + DT_LEN, 0);
+	ImGui::Text("Delta Time: %.3fms", ((float)total / (float)DT_LEN));
 	ImGui::End();
 }
 
@@ -134,9 +137,8 @@ int main(int argc, char ** argv)
 	InitEngine();
 	Log::InitLog();
 	
-	Resources::LoadAllResources();
 	LoadResources();
-	
+
 	loopFunction = &Loop;
 	windowFunction = &Window;
 
