@@ -164,3 +164,13 @@ void BackendSDLGL::Cleanup()
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
+
+void BackendSDLGL::SetVSync(bool on)
+{
+	SDL_GL_SetSwapInterval(on); // Enable vsync
+}
+
+void BackendSDLGL::ResizeWindow(int w, int h)
+{
+	SDL_SetWindowSize(window, w, h);
+}

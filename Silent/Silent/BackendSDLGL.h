@@ -33,5 +33,8 @@ public:
 	void Clear() override;
 	void Render() override;
 	void Cleanup() override;
+
+	void SetVSync(bool on) override;
+	void ResizeWindow(int w, int h) override;
 };
 

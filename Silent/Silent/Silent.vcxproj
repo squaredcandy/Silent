@@ -90,7 +90,7 @@
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)ext\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc140-mt.lib;freetype.lib;glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;SDL2.lib;SDL2main.lib;zlib.lib;zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -115,7 +115,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)ext\freetype;$(ProjectDir)ext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ext/freetype;$(ProjectDir)ext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -207,58 +207,6 @@
     <ClInclude Include="ext\assimp\version.h" />
     <ClInclude Include="ext\assimp\Vertex.h" />
     <ClInclude Include="ext\assimp\XMLTools.h" />
-    <ClInclude Include="ext\FastNoise\FastNoise.h" />
-    <ClInclude Include="ext\freetype\freetype\config\ftconfig.h" />
-    <ClInclude Include="ext\freetype\freetype\config\ftheader.h" />
-    <ClInclude Include="ext\freetype\freetype\config\ftmodule.h" />
-    <ClInclude Include="ext\freetype\freetype\config\ftoption.h" />
-    <ClInclude Include="ext\freetype\freetype\config\ftstdlib.h" />
-    <ClInclude Include="ext\freetype\freetype\freetype.h" />
-    <ClInclude Include="ext\freetype\freetype\ftadvanc.h" />
-    <ClInclude Include="ext\freetype\freetype\ftbbox.h" />
-    <ClInclude Include="ext\freetype\freetype\ftbdf.h" />
-    <ClInclude Include="ext\freetype\freetype\ftbitmap.h" />
-    <ClInclude Include="ext\freetype\freetype\ftbzip2.h" />
-    <ClInclude Include="ext\freetype\freetype\ftcache.h" />
-    <ClInclude Include="ext\freetype\freetype\ftchapters.h" />
-    <ClInclude Include="ext\freetype\freetype\ftcid.h" />
-    <ClInclude Include="ext\freetype\freetype\ftdriver.h" />
-    <ClInclude Include="ext\freetype\freetype\fterrdef.h" />
-    <ClInclude Include="ext\freetype\freetype\fterrors.h" />
-    <ClInclude Include="ext\freetype\freetype\ftfntfmt.h" />
-    <ClInclude Include="ext\freetype\freetype\ftgasp.h" />
-    <ClInclude Include="ext\freetype\freetype\ftglyph.h" />
-    <ClInclude Include="ext\freetype\freetype\ftgxval.h" />
-    <ClInclude Include="ext\freetype\freetype\ftgzip.h" />
-    <ClInclude Include="ext\freetype\freetype\ftimage.h" />
-    <ClInclude Include="ext\freetype\freetype\ftincrem.h" />
-    <ClInclude Include="ext\freetype\freetype\ftlcdfil.h" />
-    <ClInclude Include="ext\freetype\freetype\ftlist.h" />
-    <ClInclude Include="ext\freetype\freetype\ftlzw.h" />
-    <ClInclude Include="ext\freetype\freetype\ftmac.h" />
-    <ClInclude Include="ext\freetype\freetype\ftmm.h" />
-    <ClInclude Include="ext\freetype\freetype\ftmodapi.h" />
-    <ClInclude Include="ext\freetype\freetype\ftmoderr.h" />
-    <ClInclude Include="ext\freetype\freetype\ftotval.h" />
-    <ClInclude Include="ext\freetype\freetype\ftoutln.h" />
-    <ClInclude Include="ext\freetype\freetype\ftparams.h" />
-    <ClInclude Include="ext\freetype\freetype\ftpfr.h" />
-    <ClInclude Include="ext\freetype\freetype\ftrender.h" />
-    <ClInclude Include="ext\freetype\freetype\ftsizes.h" />
-    <ClInclude Include="ext\freetype\freetype\ftsnames.h" />
-    <ClInclude Include="ext\freetype\freetype\ftstroke.h" />
-    <ClInclude Include="ext\freetype\freetype\ftsynth.h" />
-    <ClInclude Include="ext\freetype\freetype\ftsystem.h" />
-    <ClInclude Include="ext\freetype\freetype\fttrigon.h" />
-    <ClInclude Include="ext\freetype\freetype\fttypes.h" />
-    <ClInclude Include="ext\freetype\freetype\ftwinfnt.h" />
-    <ClInclude Include="ext\freetype\freetype\t1tables.h" />
-    <ClInclude Include="ext\freetype\freetype\ttnameid.h" />
-    <ClInclude Include="ext\freetype\freetype\tttables.h" />
-    <ClInclude Include="ext\freetype\freetype\tttags.h" />
-    <ClInclude Include="ext\freetype\ft2build.h" />
-    <ClInclude Include="ext\GLFW\glfw3.h" />
-    <ClInclude Include="ext\GLFW\glfw3native.h" />
     <ClInclude Include="ext\glm\common.hpp" />
     <ClInclude Include="ext\glm\detail\func_common.hpp" />
     <ClInclude Include="ext\glm\detail\func_exponential.hpp" />
@@ -418,7 +366,37 @@
     <ClInclude Include="ext\ImGui\stb_rect_pack.h" />
     <ClInclude Include="ext\ImGui\stb_textedit.h" />
     <ClInclude Include="ext\ImGui\stb_truetype.h" />
-    <ClInclude Include="ext\lodepng\lodepng.h" />
+    <ClInclude Include="ext\nlohmann\adl_serializer.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\conversions\from_json.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\conversions\to_chars.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\conversions\to_json.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\exceptions.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\input\binary_reader.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\input\input_adapters.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\input\json_sax.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\input\lexer.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\input\parser.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\input\position_t.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\iterators\internal_iterator.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\iterators\iteration_proxy.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\iterators\iter_impl.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\iterators\json_reverse_iterator.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\iterators\primitive_iterator.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\json_pointer.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\json_ref.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\macro_scope.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\macro_unscope.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\meta\cpp_future.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\meta\detected.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\meta\is_sax.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\meta\type_traits.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\meta\void_t.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\output\binary_writer.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\output\output_adapters.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\output\serializer.hpp" />
+    <ClInclude Include="ext\nlohmann\detail\value_t.hpp" />
+    <ClInclude Include="ext\nlohmann\json.hpp" />
+    <ClInclude Include="ext\nlohmann\json_fwd.hpp" />
     <ClInclude Include="ext\SDL\begin_code.h" />
     <ClInclude Include="ext\SDL\close_code.h" />
     <ClInclude Include="ext\SDL\SDL.h" />
@@ -490,6 +468,8 @@
     <ClInclude Include="ext\SDL\SDL_version.h" />
     <ClInclude Include="ext\SDL\SDL_video.h" />
     <ClInclude Include="ext\stb_image.h" />
+    <ClInclude Include="ext\tinyobjloader.h" />
+    <ClInclude Include="Log.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModCommon.h" />
     <ClInclude Include="Mods.h" />
@@ -498,6 +478,7 @@
     <ClInclude Include="Random.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Resources.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="Systems.h" />
@@ -630,7 +611,6 @@
     <ClCompile Include="BackendSDLGL.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Entities.cpp" />
-    <ClCompile Include="ext\FastNoise\FastNoise.cpp" />
     <ClCompile Include="ext\glm\detail\glm.cpp" />
     <ClCompile Include="ext\GL\gl3w.c" />
     <ClCompile Include="ext\ImGui\imgui.cpp" />
@@ -639,11 +619,12 @@
     <ClCompile Include="ext\ImGui\imgui_freetype.cpp" />
     <ClCompile Include="ext\ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="ext\ImGui\imgui_impl_sdl.cpp" />
-    <ClCompile Include="ext\lodepng\lodepng.cpp" />
+    <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Resources.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Systems.cpp" />
     <ClCompile Include="Texture.cpp" />

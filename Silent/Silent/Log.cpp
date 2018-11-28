@@ -2,14 +2,21 @@
 
 #include "ImGui/imgui.h"
 
-namespace Silent::Engine
+#include "Settings.h"
+
+namespace Silent::Engine::Log
 {
-	void Log::InitLog()
+	std::vector<LogEntry> logHistory;
+	void InitLog()
 	{
-		LOG_TRACE("hey this actually works %d", 1);
+		LOG_TRACE("Testing Trace Log");
+		LOG_INFO("Testing Info Log");
+		LOG_WARN("Testing Warn Log");
+		LOG_ERROR("Testing Error Log");
+		LOG_FATAL("Testing Fatal Log");
 	}
 
-	void Log::AddToLog(InfoLevel lvl, const char * format, ...)
+	void AddToLog(InfoLevel lvl, const char * format, ...)
 	{
 		char buf[BUFFER_SIZE];
 		va_list args;
@@ -17,48 +24,48 @@ namespace Silent::Engine
 		_vsnprintf_s(buf, BUFFER_SIZE, _TRUNCATE, format, args);
 		va_end(args);
 
-		// maybe put the time here as well someday
-		std::string info;
-
-		switch (lvl)
-		{
-		case TRACE_LEVEL:
-			info = "[TRACE] ";
-			break;
-		case INFO_LEVEL:
-			info = "[INFO] ";
-			break;
-		case WARN_LEVEL:
-			info = "[WARN] ";
-			break;
-		case ERROR_LEVEL:
-			info = "[ERROR] ";
-			break;
-		case FATAL_LEVEL:
-			info = "[FATAL] ";
-			break;
-		default:
-			info = "[FAIL] ";
-			break;
-		}
-
-		logHistory.emplace_back(info + buf);
+		logHistory.emplace_back(LogEntry(lvl, buf));
 	}
 
-	void Log::Draw()
+	void Draw()
 	{
-		bool a = true;
 		ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-		ImGui::Begin("Console", &a);
+		ImGui::Begin("Log", &Settings::showLog);
 		ImGui::BeginChild("Scrolling", ImVec2(0, 0), false,
 						  ImGuiWindowFlags_HorizontalScrollbar);
-		for (const auto& str : logHistory)
+		for (const auto& entry : logHistory)
 		{
+			std::string info;
 			// Up to here - Adding color to log
-			ImGui::TextUnformatted(str.c_str());
+			switch (entry.infoLevel)
+			{
+			case TRACE_LEVEL:
+				info = "[TRACE]";
+				break;
+			case INFO_LEVEL:
+				info = "[INFO]";
+				break;
+			case WARN_LEVEL:
+				info = "[WARN]";
+				break;
+			case ERROR_LEVEL:
+				info = "[ERROR]";
+				break;
+			case FATAL_LEVEL:
+				info = "[FATAL]";
+				break;
+			default:
+				info = "[FAIL]";
+				break;
+			}
+
+			ImGui::TextColored(Settings::infoColor[entry.infoLevel], 
+							   "%s %s %s", entry.logTime.c_str(), info.c_str(), 
+							   entry.msg.c_str());
+
+			//ImGui::TextUnformatted(str.c_str());
 		}
 		ImGui::EndChild();
 		ImGui::End();
 	}
-
 }

@@ -1,10 +1,12 @@
 #include "Engine.h"
 
-#include <any>
+#include "Log.h"
 
 namespace Silent::Engine
 {
 	std::shared_ptr<Backend> backend;
+	std::function<void()> loopFunction;
+	std::function<void()> windowFunction;
 
 	void InitEngine()
 	{
@@ -12,7 +14,7 @@ namespace Silent::Engine
 		backend = std::make_shared<BackendSDLGL>();
 #elif defined BACKEND_DEFAULT
 		backend = std::make_shared<BackendSDLGL>();
-#endif // BACKEND_SDL_GL
+#endif // BACKEND
 
 		backend->Init();
 		backend->SettingsInit();
@@ -28,45 +30,11 @@ namespace Silent::Engine
 
 			Systems::Update();
 			Systems::Execute();
-
 			bool a = true;
 			ImGui::ShowDemoWindow(&a);
 
-			ImGui::Begin("test", &a);
-			if (ImGui::CollapsingHeader("Entity"))
-			{
-				auto ent = Entities::GetAll();
-				static std::string currentEntityName{ "" };
-				static EntityID currentID = -1;
-				static Entity* currentEntity;
-				if (ImGui::BeginCombo("##Entity", currentEntityName.c_str()))
-				{
-					for (auto& e : ent)
-					{
-						std::string entityName = e->GetCommon().name;
-						EntityID id = e->GetID();
-						bool selected = (currentID = id);
-						ImGui::PushID((int) id);
-						if (ImGui::Selectable(entityName.c_str(), selected))
-						{
-							currentEntityName = entityName;
-							currentID = id;
-							currentEntity = e;
-						}
-						if (selected)
-						{
-							ImGui::SetItemDefaultFocus();
-						}
-						ImGui::PopID();
-					}
-					ImGui::EndCombo();
-				}
-				if (currentEntity)
-				{
-					currentEntity->GUI();
-				}
-			}
-			ImGui::End();
+			loopFunction();
+			windowFunction();
 
  			backend->Render();
 		}

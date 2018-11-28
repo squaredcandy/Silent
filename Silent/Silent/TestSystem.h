@@ -10,7 +10,7 @@ public:
 
 	void UpdateEntities() override
 	{
-		targets = Silent::Engine::Entities::GetAll<ModTransform>();
+		targets = Silent::Engine::Entities::GetAll<ModTransform>(Silent::Engine::Scene::entities, true);
 	}
 
 	void Execute() override

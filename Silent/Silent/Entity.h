@@ -20,12 +20,15 @@ private:
 	EntityID id = GenerateNewID();
 	bool active = true;
 	std::vector<std::unique_ptr<Module>> modules;
+	std::vector<std::unique_ptr<Entity>> childEntities;
 
 	ModuleBitSet moduleBitset;
 	ModuleArray moduleArray;
 
 public:
 	virtual ~Entity() = default;
+
+	auto& GetChildren() { return childEntities; }
 
 	void Update(float deltaTime)
 	{

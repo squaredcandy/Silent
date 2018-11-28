@@ -20,4 +20,8 @@ public:
 	virtual void Clear() = 0;
 	virtual void Render() = 0;
 	virtual void Cleanup() = 0;
+
+	//
+	virtual void SetVSync(bool on) = 0;
+	virtual void ResizeWindow(int w, int h) = 0;
 };

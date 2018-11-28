@@ -7,12 +7,16 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <filesystem>
+#include <string>
 
+namespace fs = std::filesystem;
 
 namespace Silent::Engine::Resources
 {
 	extern std::map<std::string, std::shared_ptr<Resource>> resources;
 
+	void LoadAllResources();
 	bool ResourceLoaded(std::string str);
 	
 	template<typename T> T* GetResource(std::string str)
@@ -28,13 +32,12 @@ namespace Silent::Engine::Resources
 	}
 
 	template<typename T, typename... TArgs> 
-	T* LoadResourceFromFile(std::string str, TArgs&&... mArgs)
+	T* LoadResource(std::string str, TArgs&&... mArgs)
 	{
 		if (!ResourceLoaded(str))
 		{
 			T* c(new T(std::forward<TArgs>(mArgs)...));
 			std::shared_ptr<Resource> sPtr{ c };
-			//resources.emplace_back(std::move(sPtr));
 			resources[str] = sPtr;
 			return c;
 		}
@@ -43,7 +46,6 @@ namespace Silent::Engine::Resources
 			return GetResource<T>(str);
 		}
 	}
-
 
 	void CleanupResources();
 }

@@ -181,7 +181,7 @@ void Mesh::ProcessNode(aiNode * node, const aiScene * scene)
 void Mesh::LoadModel(std::string path)
 {
 	Assimp::Importer importer;
-	path.insert(0, MESH_FOLDER);
+	//path.insert(0, MESH_FOLDER);
 	const aiScene * scene = 
 		importer.ReadFile(path, 
 							//aiProcessPreset_TargetRealtime_MaxQuality);

@@ -2,22 +2,20 @@
 
 namespace Silent::Engine::Entities
 {
-	EntityID playerID;
-	// We don't declare it in h file because we want to protect it from
-	// directly accessed
-	std::vector<std::unique_ptr<Entity>> entities;
-
-	void Update(float deltaTime)
+	void Update(float deltaTime, EntityContainer& entities)
 	{
 		// We do this because we can potentually add an entity during the update
 		for (auto i = 0; i < entities.size(); ++i)
 		{
 			entities[i]->Update(deltaTime);
+
+			Update(deltaTime, entities[i]->GetChildren());
+			RemoveInactive(entities[i]->GetChildren());
 		}
-		RemoveInactive();
+		RemoveInactive(entities);
 	}
 
-	void RemoveInactive()
+	void RemoveInactive(EntityContainer& entities)
 	{
 		// Maybe make a new entity that gets their inv and drops it
 		entities.erase(std::remove_if(std::begin(entities), std::end(entities),
@@ -27,18 +25,18 @@ namespace Silent::Engine::Entities
 		}), entities.end());
 	}
 
-	void RemoveAll()
+	void RemoveAll(EntityContainer& entities)
 	{
 		entities.clear();
 	}
 
-	std::size_t Size()
+	std::size_t Size(EntityContainer& entities)
 	{
 		return entities.size();
 	}
 
-	Entity * AddEntity(std::string name, glm::vec3 translate,
-					   glm::vec3 rotate, glm::vec3 scale)
+	Entity * AddEntity(std::string name, EntityContainer& entities,
+					   glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale)
 	{
 		std::unique_ptr<Entity> uPtr = std::make_unique<Entity>();
 		uPtr->AddMod<ModCommon>(name);
@@ -48,7 +46,7 @@ namespace Silent::Engine::Entities
 		return &*entities.back();
 	}
 
-	Entity * Get(EntityID id) noexcept
+	Entity * Get(EntityID id, EntityContainer& entities) noexcept
 	{
 		auto found = std::find_if(std::begin(entities), std::end(entities),
 								  [=] (const std::unique_ptr<Entity>& e)
@@ -59,16 +57,33 @@ namespace Silent::Engine::Entities
 		{
 			return (*found).get();
 		}
+
+		// We cant find it in the top layer, we go downwards
+		for (const auto& entity : entities)
+		{
+			return Get(id, entity->GetChildren());
+		}
+
 		return nullptr;
 	}
 
-	std::vector<Entity*> GetAll()
+	std::vector<Entity*> GetAll(EntityContainer& entities, bool recursive)
 	{
 		std::vector<Entity*> found;
 		for (auto & entity : entities)
 		{
-			auto ptr = entity.get();
-			found.emplace_back(ptr);
+			// Get this ptr
+			found.emplace_back(entity.get());
+			
+			if (!recursive) continue;
+
+			// Get the ptr of all children (RECURSIVE!!)
+			auto children = GetAll(entity->GetChildren());
+			if (!children.empty())
+			{
+				found.reserve(children.size());
+				found.insert(found.end(), children.begin(), children.end());
+			}
 		}
 		return found;
 	}
