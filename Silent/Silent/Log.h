@@ -66,9 +66,6 @@ namespace Silent::Engine::Log
 
 	// Don't use this version, use the macro version underneath
 	void AddToLog(InfoLevel lvl, const char * format, ...);
-
-	// Draw the log
-	void Draw();
 }
 
 #ifdef _DEBUG

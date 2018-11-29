@@ -1086,7 +1086,10 @@
     <ClInclude Include="ext\ImGui\imstb_textedit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ext\ImGui\imgui_dock.h">
+    <ClInclude Include="ext\ImGui\imgui_nodegrapheditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Widgets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1516,7 +1519,10 @@
     <ClCompile Include="ext\ImGui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ext\ImGui\imgui_dock.cpp">
+    <ClCompile Include="ext\ImGui\imgui_nodegrapheditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

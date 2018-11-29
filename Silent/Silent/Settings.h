@@ -42,7 +42,9 @@ namespace Silent::Settings
 
 	extern ImVec4 clearColor;
 
-	void SettingsGUI();
-
+	void ChangeWindowWidth();
+	void ChangeWindowHeight();
+	void ChangeVSync();
 	void SaveSettings();
+	void LoadSettings();
 }

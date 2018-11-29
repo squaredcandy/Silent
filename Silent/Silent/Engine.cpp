@@ -30,8 +30,6 @@ namespace Silent::Engine
 
 			Systems::Update();
 			Systems::Execute();
-			bool a = true;
-			ImGui::ShowDemoWindow(&a);
 
 			loopFunction();
 			windowFunction();

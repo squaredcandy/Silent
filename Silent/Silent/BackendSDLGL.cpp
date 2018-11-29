@@ -77,6 +77,11 @@ void BackendSDLGL::Init()
 	// Setup ImGui binding
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
 	ImGui_ImplSDL2_InitForOpenGL(window, context);
 	ImGui_ImplOpenGL3_Init(/*"#version 410 core"*/);
 }
@@ -149,8 +154,18 @@ void BackendSDLGL::Clear()
 void BackendSDLGL::Render()
 {
 	ImGui::Render();
+	SDL_GL_MakeCurrent(window, context);
 	Clear();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	ImGuiIO& io = ImGui::GetIO();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
+
+	SDL_GL_MakeCurrent(window, context);
 	SDL_GL_SwapWindow(window);
 }
 

@@ -39,9 +39,9 @@ public:
 	{
 		if (ImGui::TreeNode("Transform Module"))
 		{
-			ImGui::InputFloat3("Translation", glm::value_ptr(transform.translation), 3);
-			ImGui::InputFloat3("Rotation", glm::value_ptr(transform.rotation), 3);
-			ImGui::InputFloat3("Scale", glm::value_ptr(transform.scale), 3);
+			IMGUI_FLOATINPUT3("Translation", glm::value_ptr(transform.translation));
+			IMGUI_FLOATINPUT3("Rotation", glm::value_ptr(transform.rotation));
+			IMGUI_FLOATINPUT3("Scale", glm::value_ptr(transform.scale));
 			ImGui::TreePop();
 		}
 	}

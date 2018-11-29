@@ -26,46 +26,4 @@ namespace Silent::Engine::Log
 
 		logHistory.emplace_back(LogEntry(lvl, buf));
 	}
-
-	void Draw()
-	{
-		ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-		ImGui::Begin("Log", &Settings::showLog);
-		ImGui::BeginChild("Scrolling", ImVec2(0, 0), false,
-						  ImGuiWindowFlags_HorizontalScrollbar);
-		for (const auto& entry : logHistory)
-		{
-			std::string info;
-			// Up to here - Adding color to log
-			switch (entry.infoLevel)
-			{
-			case TRACE_LEVEL:
-				info = "[TRACE]";
-				break;
-			case INFO_LEVEL:
-				info = "[INFO]";
-				break;
-			case WARN_LEVEL:
-				info = "[WARN]";
-				break;
-			case ERROR_LEVEL:
-				info = "[ERROR]";
-				break;
-			case FATAL_LEVEL:
-				info = "[FATAL]";
-				break;
-			default:
-				info = "[FAIL]";
-				break;
-			}
-
-			ImGui::TextColored(Settings::infoColor[entry.infoLevel], 
-							   "%s %s %s", entry.logTime.c_str(), info.c_str(), 
-							   entry.msg.c_str());
-
-			//ImGui::TextUnformatted(str.c_str());
-		}
-		ImGui::EndChild();
-		ImGui::End();
-	}
 }

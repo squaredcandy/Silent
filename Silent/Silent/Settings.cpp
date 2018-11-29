@@ -99,30 +99,4 @@ namespace Silent::Settings
 		i.close();
 		LOG_INFO("Loaded File from %s", SAVE_LOCATION);
 	}
-
-
-	void SettingsGUI()
-	{
-		if (ImGui::Button("Save Settings"))
-		{
-			SaveSettings();
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Load Settings"))
-		{
-			LoadSettings();
-		}
-		if (ImGui::InputInt("Window Width", &windowWidth, 160, 160))
-		{
-			ChangeWindowWidth();
-		}
-		if (ImGui::InputInt("Window Height", &windowHeight, 90, 90))
-		{
-			ChangeWindowHeight();
-		}
-		if (ImGui::Checkbox("vSync", &vSync))
-		{
-			ChangeVSync();
-		}
-	}
 }
