@@ -1,13 +1,12 @@
 #include "Widgets.h"
 
-#include <ImGui/imgui.h>
-
 #include <vector>
 #include <numeric>
 #include <SDL/SDL.h>
 
 #include "Log.h"
 #include "Settings.h"
+#include "NodeGraph.h"
 
 #define DT_LEN 50
 #define IMGUI_NEWWINDOW ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver)
@@ -200,5 +199,64 @@ namespace Silent::Engine::Widget
 		}
 		ImGui::EndChild();
 		ImGui::End();
+	}
+
+	static ImVec2 scrolling = ImVec2(0.0f, 0.0f);
+	static NodeID node_selected = UINT_MAX;
+
+	void DrawNodeGraphProperties(bool * open)
+	{
+		if (ImGui::Begin("Node Graph Properties", open))
+		{
+			for (const auto& node : NodeGraph::nodes)
+			{
+				node->DrawNodeProperties();
+			}
+		}
+		ImGui::End();
+	}
+	void DrawNodeGraph(bool * open)
+	{
+		if (!ImGui::Begin("Node Graph", open))
+		{
+			ImGui::End();
+			return;
+		}
+
+		ImGui::Text("MMB to Scroll (%.2f,%.2f)", scrolling.x, scrolling.y);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, (ImVec4) ImColor(40, 40, 40, 200));
+		ImGui::BeginChild("scrolling_region", ImVec2(0, 0), true, 
+						  ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove);
+		ImGui::PushItemWidth(120.0f);
+
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		draw_list->ChannelsSplit(2);
+		ImVec2 offset = ImGui::GetCursorScreenPos() - scrolling;
+		
+		for (const auto& node : NodeGraph::nodes)
+		{
+			node->DrawNode(draw_list, offset, &node_selected);
+		}
+
+		draw_list->ChannelsMerge();
+
+		if (ImGui::IsWindowHovered() && 
+			!ImGui::IsAnyItemActive() && 
+			ImGui::IsMouseDragging(2, 0.0f))
+		{
+			scrolling.x -= ImGui::GetIO().MouseDelta.x;
+			scrolling.y -= ImGui::GetIO().MouseDelta.y;
+		}
+
+		ImGui::PopItemWidth();
+		ImGui::EndChild();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar(2);
+
+		ImGui::End();
+
+		//DrawNodeGraphProperties(open);
 	}
 }

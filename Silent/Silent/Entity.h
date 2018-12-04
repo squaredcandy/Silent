@@ -5,7 +5,7 @@
 
 using EntityID = std::size_t;
 
-inline EntityID GenerateNewID()
+inline EntityID GenerateNewEntityID()
 {
 	static EntityID lastId = 0;
 	return lastId++;
@@ -17,7 +17,7 @@ class ModTransform;
 class Entity
 {
 private:
-	EntityID id = GenerateNewID();
+	EntityID id = GenerateNewEntityID();
 	bool active = true;
 	std::vector<std::unique_ptr<Module>> modules;
 	std::vector<std::unique_ptr<Entity>> childEntities;

@@ -933,13 +933,7 @@
     <ClInclude Include="Module.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ModCommon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Mods.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ModTransform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
@@ -1090,6 +1084,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Widgets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mods\ModCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mods\ModTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Nodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Nodes\NodeAddFloat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1523,6 +1535,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

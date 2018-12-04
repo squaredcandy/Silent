@@ -7,6 +7,7 @@ using namespace nlohmann;
 #include "TestSystem.h"
 #include "Log.h"
 #include "Multithread.h"
+#include "NodeGraph.h"
 #include "Widgets.h"
 
 using namespace Silent::Engine;
@@ -14,8 +15,10 @@ using namespace Silent::Engine;
 //#include <ImGui/imgui_nodegrapheditor.h>
 // NB: You can use math functions/operators on ImVec2 if you #define IMGUI_DEFINE_MATH_OPERATORS and       #include "imgui_internal.h"
 // Here we only declare simple +/- operators so others don't leak into the demo code.
-static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
+static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + /rhs.y); }
 static inline ImVec2 operator-(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x - rhs.x, lhs.y - rhs.y); }
+#endif // !IMGUI_DEFINE_MATH_OPERATORS
 // Really dumb data structure provided for the example.
 // Note that we storing links are INDICES (not ID) to make example code shorter, obviously a bad idea for any general purpose code.
 static void ShowExampleAppCustomNodeGraph(bool* opened)
@@ -253,11 +256,18 @@ void LoadResources()
 	Systems::AddSystem<TestSystem>();
 	auto obj1 = Entities::AddEntity("Object 1");
 	Entities::AddEntity("Object 2", obj1->GetChildren());
+	NodeGraph::ExampleNodes();
 }
 
 void Loop()
 {
 	//Multithread::ManageThreads();
+
+	if (ImGui::IsKeyPressed(KEYCODE_N))
+	{
+		LOG_INFO("Added nodes");
+		/*for(int i = 0; i < 20; ++i) */NodeGraph::ExampleNodes();
+	}
 }
 
 static bool a = true;
@@ -272,7 +282,8 @@ void Window()
 	Widget::ObjectInspector(&a);
 	Widget::ConfigureSettings(&a);
 
-	ShowExampleAppCustomNodeGraph(&a);
+	Widget::DrawNodeGraphProperties(&a);
+	Widget::DrawNodeGraph(&a);
 }
 
 void ChangeColors()
