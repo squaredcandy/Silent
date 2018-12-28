@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Silent.h" />
+    <ClInclude Include="src\Silent\Application.h" />
+    <ClInclude Include="src\Silent\Entity\Entities.h" />
+    <ClInclude Include="src\Silent\Entity\Entity.h" />
+    <ClInclude Include="src\Silent\Module\Module.h" />
+    <ClInclude Include="src\Silent\Module\Modules.h" />
+    <ClInclude Include="src\Silent\Platform\Platforms.h" />
+    <ClInclude Include="src\Silent\Core.h" />
+    <ClInclude Include="src\Silent\EntryPoint.h" />
+    <ClInclude Include="src\Silent\Platform\Platform.h" />
+    <ClInclude Include="src\Silent\Platform\Platform_SDL.h" />
+    <ClInclude Include="src\Silent\Resource\Resource_Buffer.h" />
+    <ClInclude Include="src\Silent\Resource\Resource_Material.h" />
+    <ClInclude Include="src\Silent\Resource\Resource_Mesh.h" />
+    <ClInclude Include="src\Silent\Resource\Resource_Shader.h" />
+    <ClInclude Include="src\Silent\Resource\Resource_Texture.h" />
+    <ClInclude Include="src\Silent\System\System_Camera.h" />
+    <ClInclude Include="src\Silent\System\System_Render.h" />
+    <ClInclude Include="src\Silent\Utility\PrecompiledHeader.h" />
+    <ClInclude Include="src\Silent\Utility\Random.h" />
+    <ClInclude Include="src\Silent\Renderer\Renderers.h" />
+    <ClInclude Include="src\Silent\Renderer\Renderer.h" />
+    <ClInclude Include="src\Silent\Renderer\Renderer_GL3.h" />
+    <ClInclude Include="src\Silent\Resource\Resource.h" />
+    <ClInclude Include="src\Silent\Resource\Resources.h" />
+    <ClInclude Include="src\Silent\Utility\Singleton.h" />
+    <ClInclude Include="src\Silent\System\System.h" />
+    <ClInclude Include="src\Silent\System\Systems.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Vendor\ImGui\imgui.cpp" />
+    <ClCompile Include="..\Vendor\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="..\Vendor\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="..\Vendor\ImGui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\Vendor\ImGui\imgui_impl_sdl.cpp" />
+    <ClCompile Include="..\Vendor\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Silent\Application.cpp" />
+    <ClCompile Include="src\Silent\Entity\Entities.cpp" />
+    <ClCompile Include="src\Silent\Module\Modules.cpp" />
+    <ClCompile Include="src\Silent\Platform\Platforms.cpp" />
+    <ClCompile Include="src\Silent\Platform\Platform_SDL.cpp" />
+    <ClCompile Include="src\Silent\Resource\Resource_Buffer.cpp" />
+    <ClCompile Include="src\Silent\Resource\Resource_Material.cpp" />
+    <ClCompile Include="src\Silent\Resource\Resource_Mesh.cpp" />
+    <ClCompile Include="src\Silent\Resource\Resource_Shader.cpp" />
+    <ClCompile Include="src\Silent\Resource\Resource_Texture.cpp" />
+    <ClCompile Include="src\Silent\System\System_Camera.cpp" />
+    <ClCompile Include="src\Silent\System\System_Render.cpp" />
+    <ClCompile Include="src\Silent\Utility\PrecompiledHeader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PrecompiledHeader.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PrecompiledHeader.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="src\Silent\Utility\Random.cpp" />
+    <ClCompile Include="src\Silent\Renderer\Renderers.cpp" />
+    <ClCompile Include="src\Silent\Renderer\Renderer_GL3.cpp" />
+    <ClCompile Include="src\Silent\Resource\Resources.cpp" />
+    <ClCompile Include="src\Silent\Utility\Singleton.cpp" />
+    <ClCompile Include="src\Silent\System\Systems.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\Vendor\ImGui\imgui.natvis" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{F371FBE8-747C-46D2-8415-AEF3301F0B98}</ProjectGuid>
+    <RootNamespace>Silent</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)Bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)Bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>SL_PLATFORM_WINDOWS;SL_BUILD_DLL;_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>PrecompiledHeader.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ForcedIncludeFiles>PrecompiledHeader.h</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>$(SolutionDir)Vendor;$(SolutionDir)Silent\src\Silent\Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)Vendor\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc140-mt.lib;glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;SDL2.lib;SDL2main.lib;zlib.lib;zlibstatic.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>SL_PLATFORM_WINDOWS;SL_BUILD_DLL;_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>PrecompiledHeader.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ForcedIncludeFiles>PrecompiledHeader.h</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>$(SolutionDir)Vendor;$(SolutionDir)Silent\src\Silent\Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)Vendor\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc140-mt.lib;glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;SDL2.lib;SDL2main.lib;zlib.lib;zlibstatic.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
