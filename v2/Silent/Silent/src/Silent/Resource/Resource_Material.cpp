@@ -2,8 +2,14 @@
 
 namespace Silent
 {
+	MaterialID GenerateMaterialID()
+	{
+		static MaterialID newID = 1u;
+		return newID++;
+	}
 
-	Resource_Material::Resource_Material(std::string name)
+	Resource_Material::Resource_Material(std::string name) 
+		: _materialID(GenerateMaterialID())
 	{
 
 	}
@@ -28,9 +34,16 @@ namespace Silent
 		uniformParams[name] = val;
 	}
 
+	MaterialID Resource_Material::GetMaterialID() const
+	{
+		return _materialID;
+	}
+
 	void Resource_Material::Cleanup()
 	{
-
+		//_shader.reset();
+		_textures.clear();
+		uniformParams.clear();
 	}
 
 }

@@ -41,6 +41,7 @@
     <ClInclude Include="src\Silent\System\Systems.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Vendor\FastNoise.cpp" />
     <ClCompile Include="..\Vendor\ImGui\imgui.cpp" />
     <ClCompile Include="..\Vendor\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Vendor\ImGui\imgui_draw.cpp" />

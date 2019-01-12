@@ -52,7 +52,11 @@ namespace Silent
 		//}
 		bool operator==(const Module& other) const
 		{
-			return _entity->_entityID == other._entity->_entityID;
+			return _entity == other._entity;
+		}
+		bool operator<(const Module& other) const
+		{
+			return _entity < other._entity;
 		}
 	};
 
@@ -94,7 +98,7 @@ namespace Silent
 		// which we don't update the light
 		float lightDistance = 100.f;
 
-		float translateSpeed = 50.f;
+		float translateSpeed = 5.f;
 		float rotateSpeed = 10.f;
 
 		glm::vec3 translation;

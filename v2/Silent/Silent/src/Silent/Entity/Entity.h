@@ -1,5 +1,7 @@
 #pragma once
 
+#include <set>
+#include <typeindex>
 
 namespace Silent
 {
@@ -18,17 +20,17 @@ namespace Silent
 		EntityID _entityID = GenerateEntityID();
 		bool _active = true;
 
+		std::set<std::type_index> modules;
+
 		Entity() = default;
 		~Entity() = default;
 
-		//Entity(Entity&&) = default;
-
-		inline bool operator<(const Entity& other)
+		inline bool operator<(const Entity& other) const
 		{
 			return _entityID < other._entityID;
 		}
 
-		inline bool operator==(const Entity& other)
+		inline bool operator==(const Entity& other) const
 		{
 			return _entityID == other._entityID;
 		}

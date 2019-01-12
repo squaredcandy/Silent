@@ -10,7 +10,8 @@ namespace Silent
 		// I need to move this to the transform module
 		if (modules.TypeModified<Module_Camera>())
 		{
-			_modules = modules.GetModules<Module_Camera>(true);
+			auto newMods = modules.GetModulesAddedThisFrame<Module_Camera>(true);
+			_modules = modules.GetModulesFiltered<Module_Camera>(newMods);
 			for (auto mod : _modules[typeid(Module_Camera)])
 			{
 				auto cam = dynamic_cast<Module_Camera*>(mod);
@@ -34,6 +35,11 @@ namespace Silent
 		CameraTranslation(dt);
 		CameraRotation(dt);
 		UpdateCameraVectors();
+	}
+
+	void System_Camera::Cleanup()
+	{
+		
 	}
 
 	void System_Camera::CameraTranslation(float dt)
@@ -86,4 +92,15 @@ namespace Silent
 		_camera->upVector = glm::normalize(
 			glm::cross(_camera->rightVector, _camera->forwardVector));
 	}
+
+	void System_Camera::ForceUpdateModules(Modules& modules)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	void System_Camera::IncrementalUpdateModules(Modules& modules)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
 }

@@ -3,6 +3,8 @@
 #include "Module.h"
 #include "../Utility/Singleton.h"
 
+#include "../Entity/Entities.h"
+
 #include <set>
 #include <typeindex>
 #include <typeinfo>
@@ -73,6 +75,10 @@ namespace Silent
 		// check if the modules have been modified so we can update them in systems
 		std::map<std::type_index, bool> typesModified;
 
+		// Tally the modules types that have been modified 
+		// pair<added, removed>
+		std::map<std::type_index, std::pair<int, int>> typesCounter;
+
 		// The types that were handled this frame
 		std::map<std::type_index, bool> typesHandled;
 
@@ -107,6 +113,8 @@ namespace Silent
 
 			return TypeModified<S, Arg...>() || typesModified[typeid(T)];
 		}
+
+		const std::map<std::type_index, std::pair<int, int>>& GetModifiedCounter();
 
 		void UpdateTypesModified();
 
@@ -144,6 +152,11 @@ namespace Silent
 			ModulePtr uPtr{ m };
 			auto success = modules[typeid(T)].insert(std::move(uPtr));
 			typesModified[typeid(T)] = true;
+			typesCounter[typeid(T)].first++;
+
+			// Add a reference to it in the entity for quick query and retrival
+			entity->modules.emplace(typeid(T));
+
 			return dynamic_cast<T*>(success.first->get());
 		}
 
@@ -174,86 +187,226 @@ namespace Silent
 			{
 				if (mod->_entity == entity)
 				{
-					modules[typeid(T)].erase(mod);
+					mod->_entity->modules.erase(typeid(T));
+;					modules[typeid(T)].erase(mod);
 					typesModified[typeid(T)] = true;
+					typesCounter[typeid(T)].second++;
 					return true;
 				}
 			}
 			return false;
 		}
 
-		// Get all the modules of one type
+// 		MapTypeToConAModule GetModules(std::vector<std::type_index> t, 
+// 									   bool onlyActive);
+// 		MapTypeToConAModule GetModulesAddedThisFrame(
+// 			std::vector<std::type_index> types, bool onlyActive);
+
 		template<typename T>
-		MapTypeToConAModule GetModules(bool onlyActive)
+		MapTypeToConAModule GetModulesAddedThisFrame(bool onlyActive)
 		{
-			MapTypeToConAModule found;
+			MapTypeToConAModule map;
+
+			auto sizeDiff = modules[typeid(T)].size() - typesCounter[typeid(T)].first;
+
+			for (auto it = std::next(modules[typeid(T)].begin(), sizeDiff);
+				 it != modules[typeid(T)].end(); ++it)
+			{
+				map[typeid(T)].emplace((*it).get());
+			}
+
+			return map;
+		}
+
+		template<typename T, typename S, typename... Arg>
+		MapTypeToConAModule GetModulesAddedThisFrame(bool onlyActive)
+		{
+			static std::set<std::type_index> types{ typeid(T), typeid(S), typeid(Arg)... };
+			MapTypeToConAModule map;
+
+			for (const auto& type : types)
+			{
+				auto sizeDiff = modules[type].size() - typesCounter[type].first;
+
+				for (auto it = std::next(modules[type].begin(), sizeDiff);
+					 it != modules[type].end(); ++it)
+				{
+					map[type].emplace((*it).get());
+				}
+			}
+
+			return map;
+		}
+
+		template<typename T>
+		MapTypeToConAModule GetModulesFiltered(MapTypeToConAModule& filter,
+											   bool onlyActive = true)
+		{
+			MapTypeToConAModule map;
 
 			// find the module type
-			if (!modules.count(typeid(T))) return found;
+			if (!filter.count(typeid(T))) return map;
 
-			found[typeid(T)] = ConAModule();
-			// Get the modules
-			ConAModule& mods = found[typeid(T)];
+			for (auto& m : filter[typeid(T)])
+			{
+				if (onlyActive && !m->_entity->_active) continue;
+				map[typeid(T)].emplace(m);
+			}
+
+			return map;
+		}
+
+		// Template version of Get Modules
+		// Get all the modules of one type
+		template<typename T>
+		MapTypeToConAModule GetModulesUnfiltered(bool onlyActive)
+		{
+			MapTypeToConAModule map;
+
+			// find the module type
+			if (!modules.count(typeid(T))) return map;
 
 			for (auto& m : modules[typeid(T)])
 			{
 				if (onlyActive && !m->_entity->_active) continue;
-				mods.emplace(m.get());
+				map[typeid(T)].emplace(m.get());
 			}
 
-			return found;
+			return map;
 		}
 
 		template<typename T, typename S, typename... Arg>
-		MapTypeToConAModule GetModules(bool onlyActive)
+		MapTypeToConAModule GetModulesFiltered(MapTypeToConAModule& filter, 
+											   bool onlyActive = true)
 		{
-			// not using auto so intellisense can work
-			auto matchAgainst = GetModules<T>(onlyActive);
-			auto found = GetModules<S, Arg...>(onlyActive);
+			MapTypeToConAModule map;
+			static std::set<std::type_index> types{ typeid(T), typeid(S), typeid(Arg)... };
+			for (const auto& type : types) if (!filter.count(type)) return map;
 
-			auto& matchSet = matchAgainst[typeid(T)];
-			auto& foundSet = found[typeid(S)];
+			const auto& entities = Singleton<Entities>::Instance().GetEntities();
+			std::set<EntityID> ids;
 
-			std::vector<EntityID> matchingIDs;
-			matchingIDs.reserve(foundSet.size());
-
-			// Find all the Entity ID's that are in both sets
-			for (auto& f : foundSet)
+			// Get all valid ID's
+			for (const auto& entity : entities)
 			{
-				for (auto& m : matchSet)
+				const auto& mods = entity->modules;
+				//std::sort(mods.begin(), mods.end());
+				if (std::includes(types.begin(), types.end(),
+								  mods.begin(), mods.end()))
 				{
-					if (m->_entity == f->_entity)
+					ids.emplace(entity->_entityID);
+				}
+			}
+
+			// Get all the modules 
+			for (const auto& type : types)
+			{
+				for (const auto& mod : filter[type])
+				{
+					if (std::find(ids.begin(), ids.end(),
+								  mod->_entity->_entityID) != ids.end())
 					{
-						matchingIDs.emplace_back(f->_entity->_entityID);
-						break;
+						map[type].emplace(mod);
 					}
 				}
 			}
 
-			// Check the entity should to be removed
-			const auto removeModulesCheck = [&] (const AModule& mod) -> bool
-			{
-				return (std::find(matchingIDs.begin(), matchingIDs.end(),
-								  mod->_entity->_entityID) == matchingIDs.end());
-			};
-
-			// Remove unneeded modules 
-			const auto removeModules = [&] (ConAModule& moduleSet)
-			{
-				for (auto it = moduleSet.begin(); it != moduleSet.end();)
-				{
-					if (removeModulesCheck(*it)) it = moduleSet.erase(it);
-					else ++it;
-				}
-			};
-
-			// Remove both sets modules
-			removeModules(matchSet);
-			for (auto&[key, val] : found) removeModules(val);
-
-			found.merge(matchAgainst);
-
-			return found;
+			return map;
 		}
+
+		template<typename T, typename S, typename... Arg>
+		MapTypeToConAModule GetModulesUnfiltered(bool onlyActive)
+		{
+			MapTypeToConAModule map;
+			static std::set<std::type_index> types { typeid(T), typeid(S), typeid(Arg)... };
+			for (const auto& type : types)
+			{
+				if (modules.count(type) == 0) return map;
+			}
+			
+			const auto& entities = Singleton<Entities>::Instance().GetEntities();
+			std::set<EntityID> ids;
+
+			// Get all valid ID's
+			for (const auto& entity : entities)
+			{
+				const auto& mods = entity->modules;
+				//std::sort(mods.begin(), mods.end());
+				if (std::includes(types.begin(), types.end(),
+								  mods.begin(), mods.end()))
+				{
+					ids.emplace(entity->_entityID);
+				}
+			}
+
+			// Get all the modules 
+			for (const auto& type : types)
+			{
+				for (const auto& mod : modules[type])
+				{
+					if (std::find(ids.begin(), ids.end(),
+								  mod->_entity->_entityID) != ids.end())
+					{
+						map[type].emplace(mod.get());
+					}
+				}
+			}
+
+			return map;
+		}
+
+
+// 		template<typename T, typename S, typename... Arg> 
+// 		//[[deprecated("Vector version is way faster")]]
+// 		MapTypeToConAModule GetModules(bool onlyActive)
+// 		{
+// 			// not using auto so intellisense can work
+// 			auto matchAgainst = GetModules<T>(onlyActive);
+// 			auto found = GetModules<S, Arg...>(onlyActive);
+// 
+// 			auto& matchSet = matchAgainst[typeid(T)];
+// 			auto& foundSet = found[typeid(S)];
+// 
+// 			std::vector<EntityID> matchingIDs;
+// 			matchingIDs.reserve(foundSet.size());
+// 
+// 			// Find all the Entity ID's that are in both sets
+// 			for (auto& f : foundSet)
+// 			{
+// 				for (auto& m : matchSet)
+// 				{
+// 					if (m->_entity == f->_entity)
+// 					{
+// 						matchingIDs.emplace_back(f->_entity->_entityID);
+// 						break;
+// 					}
+// 				}
+// 			}
+// 
+// 			// Check the entity should to be removed
+// 			const auto removeModulesCheck = [&] (const AModule& mod) -> bool
+// 			{
+// 				return (std::find(matchingIDs.begin(), matchingIDs.end(),
+// 								  mod->_entity->_entityID) == matchingIDs.end());
+// 			};
+// 
+// 			// Remove unneeded modules 
+// 			const auto removeModules = [&] (ConAModule& moduleSet)
+// 			{
+// 				for (auto it = moduleSet.begin(); it != moduleSet.end();)
+// 				{
+// 					if (removeModulesCheck(*it)) it = moduleSet.erase(it);
+// 					else ++it;
+// 				}
+// 			};
+// 
+// 			// Remove both sets modules
+// 			removeModules(matchSet);
+// 			for (auto&[key, val] : found) removeModules(val);
+// 
+// 			found.merge(matchAgainst);
+// 
+// 			return found;
+// 		}
 	};
 }

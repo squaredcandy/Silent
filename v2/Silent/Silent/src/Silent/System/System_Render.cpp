@@ -9,12 +9,31 @@
 
 namespace Silent
 {
+	bool ModelStructure::operator==(const ModelStructure& other) const
+	{
+		return buffer->GetBufferID() == other.buffer->GetBufferID() &&
+			mesh->GetMeshID() == other.mesh->GetMeshID() &&
+			material->GetMaterialID() == other.material->GetMaterialID();
+	}
+
+	bool ModelStructure::operator<(const ModelStructure& other) const
+	{
+		return buffer->GetBufferID() < other.buffer->GetBufferID() &&
+			mesh->GetMeshID() < other.mesh->GetMeshID() &&
+			material->GetMaterialID() < other.material->GetMaterialID();
+	}
+
+	// This is slow, as this remove all the entites and adds them all back in 
+	// again adding alot of redundancy when a relevant module every frame
+	// This should be changed to force update entities as a last resort so it 
+	// flushes all the previous modules and starts again
 	void System_Render::UpdateEntities(Modules& modules)
 	{
 		// Get the camera we are working with
 		if (modules.TypeModified<Module_Camera>())
 		{
-			_modules = modules.GetModules<Module_Camera>(true);
+			auto newMods = modules.GetModulesAddedThisFrame<Module_Camera>(true);
+			_modules = modules.GetModulesFiltered<Module_Camera>(newMods);
 			for (auto mod : _modules[typeid(Module_Camera)])
 			{
 				auto cam = dynamic_cast<Module_Camera*>(mod);
@@ -30,12 +49,12 @@ namespace Silent
 		// Get the models
 		if (modules.TypeModified<Module_Transform, Module_Model, Module_Render>())
 		{
-			_models.clear();
-			_modules = modules.GetModules<Module_Transform, 
-				Module_Model, Module_Render>(true);
+			auto newMods = modules.GetModulesAddedThisFrame
+				<Module_Transform, Module_Model, Module_Render>(true);
+			_modules = modules.GetModulesFiltered
+				<Module_Transform, Module_Model, Module_Render>(newMods);
 			auto& renderModules = _modules[typeid(Module_Render)];
 			auto size = renderModules.size();
-			_models.reserve(size);
 
 			auto tfBegin = _modules[typeid(Module_Transform)].begin();
 			auto mdlBegin = _modules[typeid(Module_Model)].begin();
@@ -48,31 +67,11 @@ namespace Silent
 				{
 					auto tf = dynamic_cast<Module_Transform*>(*std::next(tfBegin, i));
 					auto mdl = dynamic_cast<Module_Model*>(*std::next(mdlBegin, i));
-					_models.emplace_back(ModelStructure{ tf, mdl, rdr });
+
+					_models[{ rdr->buffer, mdl->mesh, mdl->material }].
+						emplace_back(GetModelMatrix(tf));
 				}
 			}
-
-			// We need to sort it by bufferID and then shaderID
-			std::sort(_models.begin(), _models.end(), 
-					[] (const ModelStructure& lhs, const ModelStructure& rhs) {
-				
-				// We order by the bufferID first
-				// This ensures that same buffer objects are being rendered
-				// together and not overwritten
-				auto eqlBuf = lhs.render->buffer->GetBufferID() <
-					rhs.render->buffer->GetBufferID();
-				if (eqlBuf) return eqlBuf;
-				
-				// We order by shaderID second
-				// This minimises shader swapping which is expensive apparently
-				auto eqlShd = lhs.model->material->_shader->GetShaderID() <
-					lhs.model->material->_shader->GetShaderID();
-				if (eqlShd) return eqlShd;
-
-				// We order by textureID third
-				// Texture swapping is also expensive
-				return false;
-			});
 		}
 	}
 
@@ -100,11 +99,12 @@ namespace Silent
 		const glm::vec3 yRot{ 0, 1, 0 };
 		const glm::vec3 zRot{ 0, 0, 1 };
 
+		// Translate -> Scale -> Rotate
 		auto model = glm::translate(glm::mat4(), tf->_translate);
+		model = glm::scale(model, tf->_scale);
 		model = glm::rotate(model, glm::radians(tf->_rotate.x), xRot);
 		model = glm::rotate(model, glm::radians(tf->_rotate.y), yRot);
 		model = glm::rotate(model, glm::radians(tf->_rotate.z), zRot);
-		model = glm::scale(model, tf->_scale);
 		return model;
 	}
 
@@ -123,9 +123,9 @@ namespace Silent
 
 		BufferID currentBufferID = 0u;
 		ShaderID currentShaderID = 0u;
-		for (const auto& _model : _models)
+		for (const auto& [key, val] : _models)
 		{
-			const auto& buffer = _model.render->buffer;
+			const auto& buffer = key.buffer;
 			// if we arent switching buffers we use the last buffer
 			if (currentBufferID != buffer->GetBufferID())
 			{
@@ -133,7 +133,7 @@ namespace Silent
 				currentBufferID = buffer->GetBufferID();
 			}
 
-			const auto& material = _model.model->material;
+			const auto& material = key.material;
 			const auto& shader = material->_shader;
 			// If we arent switching shaders we use the last shader
 			if (currentShaderID != shader->GetShaderID())
@@ -145,8 +145,7 @@ namespace Silent
 				shader->SetUniform("View", view);
 			}
 
-			const auto& tf = _model.transform;
-			const auto& mesh = _model.model->mesh;
+			const auto& mesh = key.mesh;
 			const auto& renderer = shader->GetRenderer();
 
 			// Set each shaders uniform
@@ -156,24 +155,43 @@ namespace Silent
 				shader->SetUniform(key, val);
 			}
 
-			// Set the model matrix
-			auto model = GetModelMatrix(tf);
-			shader->SetUniform("Model", model);
-
 			// Assign all the textures
 			for (const auto& [key, val] : material->_textures)
 			{
 				renderer->SetTexture(key, val->GetTextureID());
 			}
-			// Draw the model
-			// This is making things super expensive
-			// Need to do some form of batch rendering here
-			renderer->DrawModel(mesh->GetMeshID());
-			
-			// If it is the last model or if the next one is not the same we 
-			// end buffer
-			if ((&_model == &_models.back()) || 
-				(*(&_model)).render->buffer->GetBufferID() != currentBufferID)
+
+			// We smaller than the batch size
+			// We only do it once and dont have to copy vectors
+			int totalSize = (int)val.size();
+			if (totalSize < MaxBatchSize)
+			{
+				renderer->MapModelData(mesh->GetMeshID(), val);
+				renderer->DrawModelInstanced(mesh->GetMeshID(), totalSize);
+			}
+			else
+			{
+				int splitIdx = 0;
+				while (splitIdx * MaxBatchSize < totalSize)
+				{
+					// Split the vector into smaller sizes
+					std::vector<glm::mat4> sub
+					(
+						val.begin() + (splitIdx * MaxBatchSize),
+						((splitIdx + 1) * MaxBatchSize < totalSize) ?
+						val.begin() + (splitIdx + 1) * MaxBatchSize : val.end()
+					);
+
+					renderer->MapModelData(mesh->GetMeshID(), sub);
+					renderer->DrawModelInstanced(mesh->GetMeshID(), totalSize);
+
+					++splitIdx;
+				}
+			}
+
+			// Check if it is the last or the next iterator does not have the same buffer
+			if (key == _models.rbegin()->first || 
+				(*(_models.find(key)++)).first.buffer->GetBufferID() != currentBufferID)
 			{
 				buffer->End();
 			}
@@ -184,4 +202,49 @@ namespace Silent
 
 		ImGui::ShowDemoWindow(&a);
 	}
+
+	void System_Render::Cleanup()
+	{
+
+	}
+
+	void System_Render::ForceUpdateModules(Modules& modules)
+	{
+		UpdateEntities(modules);
+	}
+
+	void System_Render::IncrementalUpdateModules(Modules& modules)
+	{
+		// Remove all the nullptrs incase we removed any
+// 		for (auto& [key, val] : _modules)
+// 		{
+// 			val.erase(remove_if(val.begin(), val.end(), [] (const AModule& x) { return x == nullptr; }), val.end());
+// 		}
+
+		for (auto& [key, val] : _modules)
+		{
+			for (auto cont = val.begin(); cont != val.end();)
+			{
+				if ((*cont) == nullptr) cont = val.erase(cont);
+				else ++cont;
+			}
+		}
+
+		// Add modules added last frame
+		// So the idea is that since we emplace back the new modules
+		// we know all the new modules are at the end
+		// So if we know the size of the vector last frame 
+		// (should the current size of our corresponding vector after nullptr deletions)
+		// we just have to get the subset that is not in our current vector
+
+		if (modules.TypeModified<Module_Camera>())
+		{
+		}
+
+		if (modules.TypeModified<Module_Transform, Module_Model, Module_Render>())
+		{
+
+		}
+	}
+
 }

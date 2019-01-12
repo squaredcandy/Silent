@@ -4,12 +4,23 @@
 
 #include <functional>
 
+#include "Resource/Resources.h"
+#include "Entity/Entities.h"
+#include "Module/Modules.h"
+#include "System/Systems.h"
+
 namespace Silent {
 
 	class SILENT_API Application
 	{
 	protected:
 		Platform * platform;
+
+		Resources * ress;
+		Entities * ents;
+		Modules * mods;
+		Systems * syss;
+
 	public:
 		int platformType = SL_PLATFORM_NONE;
 		int rendererType = SL_RENDERER_NONE;

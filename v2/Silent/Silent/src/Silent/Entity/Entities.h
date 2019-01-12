@@ -13,6 +13,9 @@ namespace Silent
 		std::vector<std::shared_ptr<Entity>> entities;
 
 	public:
+
+		const std::vector<std::shared_ptr<Entity>>& GetEntities();
+
 		std::shared_ptr<Entity> AddEntity(std::string name = "",
 										  std::shared_ptr<Entity> parent = nullptr,
 										  glm::vec3 translation = glm::vec3(),

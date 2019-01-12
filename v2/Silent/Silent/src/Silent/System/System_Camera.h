@@ -16,9 +16,16 @@ namespace Silent
 
 		virtual void UpdateEntities(Modules& modules) override;
 		virtual void Execute() override;
+		virtual void Cleanup() override;
 
 		void CameraTranslation(float dt);
 		void CameraRotation(float dt);
 		void UpdateCameraVectors();
+
+		virtual void ForceUpdateModules(Modules& modules) override;
+
+
+		virtual void IncrementalUpdateModules(Modules& modules) override;
+
 	};
 }

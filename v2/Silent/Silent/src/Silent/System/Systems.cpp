@@ -24,4 +24,13 @@ namespace Silent
 		}
 	}
 
+	void Systems::Cleanup()
+	{
+		for (const auto& sys : systems)
+		{
+			sys->Cleanup();
+		}
+		systems.clear();
+	}
+
 }

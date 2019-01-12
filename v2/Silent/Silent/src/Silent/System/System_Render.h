@@ -3,21 +3,26 @@
 #include "System.h"
 
 #include <ImGui/imgui.h>
+#include <tuple>
 
 namespace Silent
 {
+	class SILENT_API Resource_Buffer;
+	class SILENT_API Resource_Mesh;
+	class SILENT_API Resource_Material;
 	struct ModelStructure
 	{
-		Module_Transform * transform;
-		Module_Model * model;
-		Module_Render * render;
+		std::shared_ptr<Resource_Buffer> buffer;
+		std::shared_ptr<Resource_Mesh> mesh;
+		std::shared_ptr<Resource_Material> material;
 
-
+		bool operator==(const ModelStructure& other) const;
+		bool operator<(const ModelStructure& other) const;
 	};
 
 	class SILENT_API System_Render : public System
 	{
-		std::vector<ModelStructure> _models;
+		std::map<ModelStructure, std::vector<glm::mat4>> _models;
 
 		MapTypeToConAModule _modules;
 		Module_Camera * _camera;
@@ -33,5 +38,12 @@ namespace Silent
 
 		virtual void UpdateEntities(Modules& modules) override;
 		virtual void Execute() override;
+		virtual void Cleanup() override;
+
+		virtual void ForceUpdateModules(Modules& modules) override;
+
+
+		virtual void IncrementalUpdateModules(Modules& modules) override;
+
 	};
 }

@@ -13,6 +13,7 @@ namespace Silent
 	public:
 		Resource_Texture(std::string name = "");
 		Resource_Texture(std::string name, Renderer * renderer);
+		virtual ~Resource_Texture() = default;
 
 		void Cleanup() override;
 		TextureID GetTextureID() const;

@@ -71,5 +71,6 @@ namespace Silent
 		{
 			r.second->Cleanup();
 		}
+		resources.clear();
 	}
 }

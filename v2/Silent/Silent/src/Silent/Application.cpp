@@ -1,13 +1,22 @@
 #include "Application.h"
+#include "Utility/Singleton.h"
 
 namespace Silent
 {
 	Application::Application()
 	{
+		ress = &Singleton<Resources>::Instance();
+		ents = &Singleton<Entities>::Instance();
+		mods = &Singleton<Modules>::Instance();
+		syss = &Singleton<Systems>::Instance();
 	}
 
 	Application::~Application()
 	{
+		delete ress;
+		delete ents;
+		delete mods;
+		delete syss;
 	}
 
 	void Application::Run()

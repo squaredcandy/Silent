@@ -220,6 +220,13 @@ namespace Silent
 
 	int Renderer_GL3::Cleanup(SDL_Window * window)
 	{
+		for (const auto&[key, val] : buffers)
+		{
+			glDeleteBuffers(1, &val.framebuffer);
+			glDeleteBuffers(1, &val.colorbuffer);
+			glDeleteBuffers(1, &val.depthbuffer);
+		}
+
 		// Destroy Shaders
 		for (const auto& [key, val] : shaders)
 		{
@@ -232,6 +239,7 @@ namespace Silent
 			glDeleteVertexArrays(1, &val.VAO);
 			glDeleteBuffers(1, &val.VBO);
 			glDeleteBuffers(1, &val.EBO);
+			glDeleteBuffers(1, &val.iVBO);
 		}
 
 		// Destroy Textures
@@ -239,6 +247,11 @@ namespace Silent
 		{
 			glDeleteTextures(1, &val.textureID);
 		}
+
+		buffers.clear();
+		shaders.clear();
+		meshes.clear();
+		textures.clear();
 
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplSDL2_Shutdown();
@@ -731,6 +744,7 @@ namespace Silent
 		newMesh.EBO = 0;
 
 		GLuint size = sizeof(Vertex);
+		GLuint instanceSize = sizeof(glm::mat4);
 		CreateVAO(newMesh);
 		CreateVBO(size, newMesh);
 		CreateEBO(newMesh);
@@ -740,6 +754,15 @@ namespace Silent
 		AddAttribute(2, 2, size, offsetof(Vertex, Vertex::TexCoords), newMesh);
 		AddAttribute(3, 3, size, offsetof(Vertex, Vertex::Tangent), newMesh);
 		AddAttribute(4, 3, size, offsetof(Vertex, Vertex::Bitangent), newMesh);
+
+		glm::mat4 matrices[MaxBatchSize];
+		CreateVBO(newMesh.VAO, newMesh.iVBO, MaxBatchSize * instanceSize,
+				  &matrices[0], GL_DYNAMIC_DRAW);
+
+		AddInstancedAttribute(newMesh.VAO, newMesh.iVBO, 5, 4, instanceSize, 0);
+		AddInstancedAttribute(newMesh.VAO, newMesh.iVBO, 6, 4, instanceSize, sizeof(glm::vec4));
+		AddInstancedAttribute(newMesh.VAO, newMesh.iVBO, 7, 4, instanceSize, sizeof(glm::vec4) * 2);
+		AddInstancedAttribute(newMesh.VAO, newMesh.iVBO, 8, 4, instanceSize, sizeof(glm::vec4) * 3);
 	}
 
 	void Renderer_GL3::CreateVAO(Mesh_GL3& newMesh)
@@ -760,6 +783,9 @@ namespace Silent
 		glBindVertexArray(0);
 	}
 
+	// This is for adding instance data
+	// - here we use our current vao but supply a new vbo to hold our 
+	// instance data
 	void Renderer_GL3::CreateVBO(GLuint& vao, GLuint& vbo,
 						 GLuint64 size, void * data, GLuint drawType)
 	{
@@ -894,6 +920,23 @@ namespace Silent
 		return newID;
 	}
 	
+	void Renderer_GL3::MapModelData(MeshID meshID, const std::vector<glm::mat4>& data)
+	{
+		auto& mesh = meshes[meshID];
+		glBindVertexArray(mesh.VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, mesh.iVBO);
+		auto size = sizeof(glm::mat4) * data.size();
+		//glBufferSubData(GL_ARRAY_BUFFER, 0, size, &data[0]);
+
+		void * ptr = glMapBufferRange(GL_ARRAY_BUFFER, 0, size, 
+									  GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
+		memcpy(ptr, data.data(), size);
+		
+		glUnmapBuffer(GL_ARRAY_BUFFER);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+
 	void Renderer_GL3::DrawModel(MeshID meshID)
 	{
 		auto& mesh = meshes[meshID];
@@ -901,7 +944,22 @@ namespace Silent
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
 		glDrawElements(GL_TRIANGLES, (GLuint) mesh.indices.size(),
 					   GL_UNSIGNED_INT, nullptr);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 	}
+
+
+	void Renderer_GL3::DrawModelInstanced(MeshID meshID, int size)
+	{
+		auto& mesh = meshes[meshID];
+		glBindVertexArray(mesh.VAO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
+		glDrawElementsInstanced(GL_TRIANGLES, (GLuint) mesh.indices.size(),
+					   GL_UNSIGNED_INT, nullptr, size);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+
 }
 
 #define STB_IMAGE_IMPLEMENTATION

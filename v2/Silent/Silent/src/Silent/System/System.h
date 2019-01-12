@@ -14,10 +14,20 @@ namespace Silent
 	public:
 		System(SystemPriority priority = 0) : _priority(priority) {}
 		virtual ~System() = default;
-		virtual void UpdateEntities(Modules& modules) = 0;
-		virtual void Execute() = 0;
+		
+		
+		/*[[deprecated]] */virtual void UpdateEntities(Modules& modules) = 0;
 
-		bool operator<(const System& other)
+		// This basiclly tells the system to start from scratch
+		virtual void ForceUpdateModules(Modules& modules) = 0;
+
+		// This is a faster version where we just add and remove the relevent
+		// modules
+		virtual void IncrementalUpdateModules(Modules& modules) = 0;
+
+		virtual void Execute() = 0;
+		virtual void Cleanup() = 0;
+		bool operator<(const System& other) const
 		{
 			return _priority < other._priority;
 		}

@@ -2,9 +2,14 @@
 #include "Singleton.h"
 #include "../Module/Modules.h"
 
-
 namespace Silent
 {
+
+	const std::vector<std::shared_ptr<Silent::Entity>>& Entities::GetEntities()
+	{
+		return entities;
+	}
+
 	std::shared_ptr<Entity> Entities::AddEntity(
 		std::string name,
 		std::shared_ptr<Entity> parent,

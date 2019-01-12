@@ -25,5 +25,7 @@ namespace Silent
 			std::unique_ptr<System> uPtr{ s };
 			systems.emplace(std::move(uPtr));
 		}
+
+		void Cleanup();
 	};
 }

@@ -5,6 +5,8 @@
 #include <SDL/SDL.h>
 #include <ImGui/imgui.h>
 
+#include <glm/glm.hpp>
+
 #include <map>
 #include <any>
 
@@ -14,6 +16,11 @@ namespace Silent
 	using BufferID = unsigned int;
 	using MeshID = unsigned int;
 	using TextureID = unsigned int;
+	using MaterialID = unsigned int;
+
+	// Apprently the optimal batch size is about 1-4MB
+	// Make a function that does 1,000,000 / sizeof(Type) to give a batch size
+	const int MaxBatchSize = 15625;
 
 	class SILENT_API Renderer
 	{
@@ -70,7 +77,9 @@ namespace Silent
 
 		// Mesh
 		virtual inline MeshID LoadModel(std::string filename) = 0;
+		virtual inline void MapModelData(MeshID meshID, const std::vector<glm::mat4>& data) = 0;
 		virtual inline void DrawModel(MeshID meshID) = 0;
+		virtual inline void DrawModelInstanced(MeshID meshID, int size) = 0;
 
 		// Texture
 		virtual inline TextureID LoadTexture2D(std::string filename) = 0;

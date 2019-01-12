@@ -13,6 +13,7 @@ namespace Silent
 	{
 	public:
 		static T& Instance();
+		//static std::shared_ptr<T>& InstanceS(bool destroy = false);
 
 	protected:
 		//Singleton();

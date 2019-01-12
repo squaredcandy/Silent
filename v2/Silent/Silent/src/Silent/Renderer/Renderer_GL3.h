@@ -57,7 +57,11 @@ namespace Silent
 	class SILENT_API Mesh_GL3
 	{
 	public:
-		GLuint VAO, VBO, EBO;
+		// Vertex Array Object
+		// Vertex Buffer Object
+		// Element Buffer Object
+		// Instance Vertex Buffer Object
+		GLuint VAO, VBO, EBO, iVBO;
 
 		std::vector<Vertex> vertices;
 		std::vector<GLuint> indices;
@@ -162,7 +166,10 @@ namespace Silent
 										  float posX, float posY) override;
 		// Mesh
 		inline MeshID LoadModel(std::string filename) override;
+		// This will need to be updated somehow
+		inline void MapModelData(MeshID meshID, const std::vector<glm::mat4>& data) override;
 		inline void DrawModel(MeshID meshID) override;
+		inline void DrawModelInstanced(MeshID meshID, int size) override;
 
 		// Texture
 		inline TextureID LoadTexture2D(std::string filename) override;

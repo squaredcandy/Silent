@@ -10,6 +10,8 @@ namespace Silent
 	class SILENT_API Resource_Material : public Resource
 	{
 	protected:
+		MaterialID _materialID;
+
 	public:
 		// here we set a pointer to the shader we are going to use
 		std::shared_ptr<Resource_Shader> _shader;
@@ -22,10 +24,13 @@ namespace Silent
 		std::map<std::string, std::any> uniformParams;
 
 		Resource_Material(std::string name = "");
+		virtual ~Resource_Material() = default;
 
 		void SetShader(std::shared_ptr<Resource_Shader> shader);
 		void AddTexture(int idx, std::shared_ptr<Resource_Texture> texture);
 		void AddParameter(const std::string& name, const std::any& val);
+
+		MaterialID GetMaterialID() const;
 
 		void Cleanup() override;
 	};

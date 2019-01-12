@@ -11,12 +11,14 @@ namespace Silent
 	{
 	protected:
 		MeshID _meshID;
+		Renderer * _renderer;
 	public:
 		Resource_Mesh(std::string name = "");
 		Resource_Mesh(std::string name, Renderer * renderer);
 		virtual ~Resource_Mesh() = default;
 
 		void Cleanup() override;
+		
 		
 		MeshID GetMeshID() const;
 	};

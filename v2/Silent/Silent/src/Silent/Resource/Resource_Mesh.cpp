@@ -9,9 +9,9 @@ namespace Silent
 	}
 
 	Resource_Mesh::Resource_Mesh(std::string name, Renderer * renderer)
-		: Resource()
+		: Resource(), _renderer(renderer)
 	{
-		_meshID = renderer->LoadModel(name);
+		_meshID = _renderer->LoadModel(name);
 	}
 
 	void Resource_Mesh::Cleanup()

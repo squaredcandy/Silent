@@ -56,6 +56,7 @@
     <ClCompile Include="src\Silent\System\System_Camera.cpp" />
     <ClCompile Include="src\Silent\System\System_Render.cpp" />
     <ClCompile Include="src\Silent\Resource\Resource_Buffer.cpp" />
+    <ClCompile Include="..\Vendor\FastNoise.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\Vendor\ImGui\imgui.natvis" />
