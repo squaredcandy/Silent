@@ -36,10 +36,13 @@ namespace Silent
 		System_Render(SystemPriority priority = 1000) : System(priority){}
 		virtual ~System_Render() = default;
 
+		virtual void UpdateEntities(Modules& modules) override;
 		virtual void Execute() override;
 		virtual void Cleanup() override;
 
 		virtual void ForceUpdateModules(Modules& modules) override;
+
+
 		virtual void IncrementalUpdateModules(Modules& modules) override;
 
 	};
