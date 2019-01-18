@@ -13,6 +13,7 @@ namespace Silent
 
 	Application::~Application()
 	{
+		mods->Cleanup();
 		delete ress;
 		delete ents;
 		delete mods;

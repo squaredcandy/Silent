@@ -33,7 +33,7 @@ namespace Silent
 	using AModule = Module *;
 
 	// Selected Module Ptr
-	using ModulePtr = SModule;
+	using ModulePtr = AModule;
 
 	struct ModulePtrComparitor
 	{
@@ -55,7 +55,7 @@ namespace Silent
 	using ConModulePtr = std::vector<ModulePtr>;
 
 	// Container of Module * - Used for returns
-	using ConAModule = std::vector<ModulePtr>; // AModule
+	using ConAModule = std::vector<AModule>; // AModule
 	
 	// Mapping the type index to a container module ptr
 	using MapTypeToConModulePtr = std::map<std::type_index, ConModulePtr>;
@@ -83,6 +83,8 @@ namespace Silent
 		std::map<std::type_index, bool> typesHandled;
 
 	public:
+		void Cleanup();
+
 		template<typename T> inline bool AddModuleType()
 		{
 			ConModulePtr v;
@@ -133,7 +135,7 @@ namespace Silent
 		}
 
 		template<typename T, typename... TArgs>
-		std::shared_ptr<T> AddModule(std::shared_ptr<Entity> entity, TArgs&&... mArgs)
+		T* AddModule(std::shared_ptr<Entity> entity, TArgs&&... mArgs)
 		{
 			// Do we have the module?
 			if (!modules.count(typeid(T)))
@@ -157,11 +159,11 @@ namespace Silent
 			// Add a reference to it in the entity for quick query and retrival
 			entity->modules.emplace(typeid(T));
 
-			return std::dynamic_pointer_cast<T>(success);
+			return (T*) success;
 		}
 
 		template<typename T>
-		std::shared_ptr<T> GetModule(std::shared_ptr<Entity> entity)
+		T* GetModule(std::shared_ptr<Entity> entity)
 		{
 			// Do we have the module?
 			if (!modules.count(typeid(T)))
@@ -174,7 +176,7 @@ namespace Silent
 			{
 				if (mod->_entity == entity)
 				{
-					return std::dynamic_pointer_cast<T>(mod);
+					return (T*) mod;
 				}
 			}
 			return nullptr;
@@ -187,6 +189,7 @@ namespace Silent
 			{
 				if (mod->_entity == entity)
 				{
+					delete mod;
 					mod->_entity->modules.erase(typeid(T));
 ;					modules[typeid(T)].erase(mod);
 					typesModified[typeid(T)] = true;

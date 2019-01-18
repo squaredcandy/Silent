@@ -4,6 +4,16 @@
 
 namespace Silent
 {
+	void Modules::Cleanup()
+	{
+		for (const auto& [key, val] : modules)
+		{
+			for (const auto& mod : val)
+			{
+				delete mod;
+			}
+		}
+	}
 
 	const std::map<std::type_index, std::pair<int, int>>& Modules::GetModifiedCounter()
 	{

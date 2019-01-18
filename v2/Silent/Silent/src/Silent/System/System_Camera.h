@@ -8,7 +8,7 @@ namespace Silent
 	class SILENT_API System_Camera : public System
 	{
 		MapTypeToConAModule _modules;
-		std::shared_ptr<Module_Camera> _camera;
+		Module_Camera * _camera;
 	public:
 
 		System_Camera(SystemPriority priority = 2) : System(priority){}

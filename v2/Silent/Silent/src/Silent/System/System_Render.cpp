@@ -179,7 +179,7 @@ namespace Silent
 			_modules = modules.GetModulesUnfiltered<Module_Camera>(true);
 			for (const auto& mod : _modules[typeid(Module_Camera)])
 			{
-				auto cam = std::dynamic_pointer_cast<Module_Camera>(mod);
+				auto cam = (Module_Camera*)mod;
 				if (cam->currentCamera)
 				{
 					// we use the first current camera we can find
@@ -203,11 +203,11 @@ namespace Silent
 
 			for (auto i = 0; i < size; ++i)
 			{
-				auto rdr = std::dynamic_pointer_cast<Module_Render>(*std::next(rdrBegin, i));
+				auto rdr = (Module_Render*)(*std::next(rdrBegin, i));
 				if (rdr->render)
 				{
-					auto tf = std::dynamic_pointer_cast<Module_Transform>(*std::next(tfBegin, i));
-					auto mdl = std::dynamic_pointer_cast<Module_Model>(*std::next(mdlBegin, i));
+					auto tf = (Module_Transform*)(*std::next(tfBegin, i));
+					auto mdl = (Module_Model*)(*std::next(mdlBegin, i));
 
 					_models[{ rdr->buffer, mdl->mesh, mdl->material }].
 						emplace_back(GetModelMatrix(tf));
@@ -234,7 +234,7 @@ namespace Silent
 			_modules = modules.GetModulesFiltered<Module_Camera>(newMods);
 			for (const auto& mod : _modules[typeid(Module_Camera)])
 			{
-				auto cam = std::dynamic_pointer_cast<Module_Camera>(mod);
+				auto cam = (Module_Camera*)(mod);
 				if (cam->currentCamera)
 				{
 					// we use the first current camera we can find
@@ -260,11 +260,11 @@ namespace Silent
 			
 			for (auto i = 0; i < size; ++i)
 			{
-				auto rdr = std::dynamic_pointer_cast<Module_Render>(*std::next(rdrBegin, i));
+				auto rdr = (Module_Render*)(*std::next(rdrBegin, i));
 				if (rdr->render)
 				{
-					auto tf = std::dynamic_pointer_cast<Module_Transform>(*std::next(tfBegin, i));
-					auto mdl = std::dynamic_pointer_cast<Module_Model>(*std::next(mdlBegin, i));
+					auto tf = (Module_Transform*)(*std::next(tfBegin, i));
+					auto mdl = (Module_Model*)(*std::next(mdlBegin, i));
 
 					_models[{ rdr->buffer, mdl->mesh, mdl->material }].
 						emplace_back(GetModelMatrix(tf));

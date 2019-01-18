@@ -81,7 +81,7 @@ namespace Silent
 			_modules = modules.GetModulesUnfiltered<Module_Camera>(true);
 			for (const auto& mod : _modules[typeid(Module_Camera)])
 			{
-				auto cam = std::dynamic_pointer_cast<Module_Camera>(mod);
+				auto cam = (Module_Camera*)(mod);
 				if (cam->currentCamera)
 				{
 					// we use the first current camera we can find
@@ -110,7 +110,7 @@ namespace Silent
 			_modules = modules.GetModulesFiltered<Module_Camera>(newMods);
 			for (const auto& mod : _modules[typeid(Module_Camera)])
 			{
-				auto cam = std::dynamic_pointer_cast<Module_Camera>(mod);
+				auto cam = (Module_Camera*)(mod);
 				if (cam->currentCamera)
 				{
 					// we use the first current camera we can find
