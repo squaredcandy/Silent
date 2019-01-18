@@ -23,58 +23,6 @@ namespace Silent
 			material->GetMaterialID() < other.material->GetMaterialID();
 	}
 
-	// This is slow, as this remove all the entites and adds them all back in 
-	// again adding alot of redundancy when a relevant module every frame
-	// This should be changed to force update entities as a last resort so it 
-	// flushes all the previous modules and starts again
-	void System_Render::UpdateEntities(Modules& modules)
-	{
-		// Get the camera we are working with
-		if (modules.TypeModified<Module_Camera>())
-		{
-			auto newMods = modules.GetModulesAddedThisFrame<Module_Camera>(true);
-			_modules = modules.GetModulesFiltered<Module_Camera>(newMods);
-			for (auto mod : _modules[typeid(Module_Camera)])
-			{
-				auto cam = dynamic_cast<Module_Camera*>(mod);
-				if (cam->currentCamera)
-				{
-					// we use the first current camera we can find
-					_camera = cam;
-					break;
-				}
-			}
-		}
-
-		// Get the models
-		if (modules.TypeModified<Module_Transform, Module_Model, Module_Render>())
-		{
-			auto newMods = modules.GetModulesAddedThisFrame
-				<Module_Transform, Module_Model, Module_Render>(true);
-			_modules = modules.GetModulesFiltered
-				<Module_Transform, Module_Model, Module_Render>(newMods);
-			auto& renderModules = _modules[typeid(Module_Render)];
-			auto size = renderModules.size();
-
-			auto tfBegin = _modules[typeid(Module_Transform)].begin();
-			auto mdlBegin = _modules[typeid(Module_Model)].begin();
-			auto rdrBegin = _modules[typeid(Module_Render)].begin();
-
-			for (auto i = 0; i < size; ++i)
-			{
-				auto rdr = dynamic_cast<Module_Render*>(*std::next(rdrBegin, i));
-				if (rdr->render)
-				{
-					auto tf = dynamic_cast<Module_Transform*>(*std::next(tfBegin, i));
-					auto mdl = dynamic_cast<Module_Model*>(*std::next(mdlBegin, i));
-
-					_models[{ rdr->buffer, mdl->mesh, mdl->material }].
-						emplace_back(GetModelMatrix(tf));
-				}
-			}
-		}
-	}
-
 	glm::vec3 System_Render::GetFaceCameraVector()
 	{
 		return glm::vec3(0, _camera->rotation.x + 90.f, 0);
@@ -163,8 +111,8 @@ namespace Silent
 
 			// We smaller than the batch size
 			// We only do it once and dont have to copy vectors
-			int totalSize = (int)val.size();
-			if (totalSize < MaxBatchSize)
+			auto totalSize = (int)val.size();
+			if (totalSize < MaxBatchSize<glm::mat4>())
 			{
 				renderer->MapModelData(mesh->GetMeshID(), val);
 				renderer->DrawModelInstanced(mesh->GetMeshID(), totalSize);
@@ -172,14 +120,14 @@ namespace Silent
 			else
 			{
 				int splitIdx = 0;
-				while (splitIdx * MaxBatchSize < totalSize)
+				while (splitIdx * MaxBatchSize<glm::mat4>() < totalSize)
 				{
 					// Split the vector into smaller sizes
 					std::vector<glm::mat4> sub
 					(
-						val.begin() + (splitIdx * MaxBatchSize),
-						((splitIdx + 1) * MaxBatchSize < totalSize) ?
-						val.begin() + (splitIdx + 1) * MaxBatchSize : val.end()
+						val.begin() + (splitIdx * MaxBatchSize<glm::mat4>()),
+						((splitIdx + 1) * MaxBatchSize<glm::mat4>() < totalSize) ?
+						val.begin() + (splitIdx + 1) * MaxBatchSize<glm::mat4>() : val.end()
 					);
 
 					renderer->MapModelData(mesh->GetMeshID(), sub);
@@ -210,17 +158,51 @@ namespace Silent
 
 	void System_Render::ForceUpdateModules(Modules& modules)
 	{
-		UpdateEntities(modules);
+		// Get the camera we are working with
+		if (modules.TypeModified<Module_Camera>())
+		{
+			_modules = modules.GetModulesUnfiltered<Module_Camera>(true);
+			for (auto mod : _modules[typeid(Module_Camera)])
+			{
+				auto cam = dynamic_cast<Module_Camera*>(mod);
+				if (cam->currentCamera)
+				{
+					// we use the first current camera we can find
+					_camera = cam;
+					break;
+				}
+			}
+		}
+
+		// Get the models
+		if (modules.TypeModified<Module_Transform, Module_Model, Module_Render>())
+		{
+			_modules = modules.GetModulesUnfiltered
+				<Module_Transform, Module_Model, Module_Render>(true);
+			auto& renderModules = _modules[typeid(Module_Render)];
+			auto size = renderModules.size();
+
+			auto tfBegin = _modules[typeid(Module_Transform)].begin();
+			auto mdlBegin = _modules[typeid(Module_Model)].begin();
+			auto rdrBegin = _modules[typeid(Module_Render)].begin();
+
+			for (auto i = 0; i < size; ++i)
+			{
+				auto rdr = dynamic_cast<Module_Render*>(*std::next(rdrBegin, i));
+				if (rdr->render)
+				{
+					auto tf = dynamic_cast<Module_Transform*>(*std::next(tfBegin, i));
+					auto mdl = dynamic_cast<Module_Model*>(*std::next(mdlBegin, i));
+
+					_models[{ rdr->buffer, mdl->mesh, mdl->material }].
+						emplace_back(GetModelMatrix(tf));
+				}
+			}
+		}
 	}
 
 	void System_Render::IncrementalUpdateModules(Modules& modules)
 	{
-		// Remove all the nullptrs incase we removed any
-// 		for (auto& [key, val] : _modules)
-// 		{
-// 			val.erase(remove_if(val.begin(), val.end(), [] (const AModule& x) { return x == nullptr; }), val.end());
-// 		}
-
 		for (auto& [key, val] : _modules)
 		{
 			for (auto cont = val.begin(); cont != val.end();)
@@ -230,20 +212,49 @@ namespace Silent
 			}
 		}
 
-		// Add modules added last frame
-		// So the idea is that since we emplace back the new modules
-		// we know all the new modules are at the end
-		// So if we know the size of the vector last frame 
-		// (should the current size of our corresponding vector after nullptr deletions)
-		// we just have to get the subset that is not in our current vector
-
+		// Get the camera we are working with
 		if (modules.TypeModified<Module_Camera>())
 		{
+			auto newMods = modules.GetModulesAddedThisFrame<Module_Camera>(true);
+			_modules = modules.GetModulesFiltered<Module_Camera>(newMods);
+			for (auto mod : _modules[typeid(Module_Camera)])
+			{
+				auto cam = dynamic_cast<Module_Camera*>(mod);
+				if (cam->currentCamera)
+				{
+					// we use the first current camera we can find
+					_camera = cam;
+					break;
+				}
+			}
 		}
 
+		// Get the models
 		if (modules.TypeModified<Module_Transform, Module_Model, Module_Render>())
 		{
+			auto newMods = modules.GetModulesAddedThisFrame
+				<Module_Transform, Module_Model, Module_Render>(true);
+			_modules = modules.GetModulesFiltered
+				<Module_Transform, Module_Model, Module_Render>(newMods);
+			auto& renderModules = _modules[typeid(Module_Render)];
+			auto size = renderModules.size();
 
+			auto tfBegin = _modules[typeid(Module_Transform)].begin();
+			auto mdlBegin = _modules[typeid(Module_Model)].begin();
+			auto rdrBegin = _modules[typeid(Module_Render)].begin();
+			
+			for (auto i = 0; i < size; ++i)
+			{
+				auto rdr = dynamic_cast<Module_Render*>(*std::next(rdrBegin, i));
+				if (rdr->render)
+				{
+					auto tf = dynamic_cast<Module_Transform*>(*std::next(tfBegin, i));
+					auto mdl = dynamic_cast<Module_Model*>(*std::next(mdlBegin, i));
+
+					_models[{ rdr->buffer, mdl->mesh, mdl->material }].
+						emplace_back(GetModelMatrix(tf));
+				}
+			}
 		}
 	}
 

@@ -56,7 +56,7 @@ namespace Silent
 
 	// Container of Module * - Used for returns
 	using ConAModule = std::set<AModule, AModuleComparitor>;
-
+	
 	// Mapping the type index to a container module ptr
 	using MapTypeToConModulePtr = std::map<std::type_index, ConModulePtr>;
 
@@ -67,7 +67,7 @@ namespace Silent
 	class SILENT_API Modules
 	{
 	private:
-		const int MODULES_SIZE = 100;
+		//const int MODULES_SIZE = 100;
 		// y we have do this idk
 		ModulePtr b;
 		MapTypeToConModulePtr modules;
@@ -196,11 +196,6 @@ namespace Silent
 			}
 			return false;
 		}
-
-// 		MapTypeToConAModule GetModules(std::vector<std::type_index> t, 
-// 									   bool onlyActive);
-// 		MapTypeToConAModule GetModulesAddedThisFrame(
-// 			std::vector<std::type_index> types, bool onlyActive);
 
 		template<typename T>
 		MapTypeToConAModule GetModulesAddedThisFrame(bool onlyActive)
@@ -354,59 +349,5 @@ namespace Silent
 
 			return map;
 		}
-
-
-// 		template<typename T, typename S, typename... Arg> 
-// 		//[[deprecated("Vector version is way faster")]]
-// 		MapTypeToConAModule GetModules(bool onlyActive)
-// 		{
-// 			// not using auto so intellisense can work
-// 			auto matchAgainst = GetModules<T>(onlyActive);
-// 			auto found = GetModules<S, Arg...>(onlyActive);
-// 
-// 			auto& matchSet = matchAgainst[typeid(T)];
-// 			auto& foundSet = found[typeid(S)];
-// 
-// 			std::vector<EntityID> matchingIDs;
-// 			matchingIDs.reserve(foundSet.size());
-// 
-// 			// Find all the Entity ID's that are in both sets
-// 			for (auto& f : foundSet)
-// 			{
-// 				for (auto& m : matchSet)
-// 				{
-// 					if (m->_entity == f->_entity)
-// 					{
-// 						matchingIDs.emplace_back(f->_entity->_entityID);
-// 						break;
-// 					}
-// 				}
-// 			}
-// 
-// 			// Check the entity should to be removed
-// 			const auto removeModulesCheck = [&] (const AModule& mod) -> bool
-// 			{
-// 				return (std::find(matchingIDs.begin(), matchingIDs.end(),
-// 								  mod->_entity->_entityID) == matchingIDs.end());
-// 			};
-// 
-// 			// Remove unneeded modules 
-// 			const auto removeModules = [&] (ConAModule& moduleSet)
-// 			{
-// 				for (auto it = moduleSet.begin(); it != moduleSet.end();)
-// 				{
-// 					if (removeModulesCheck(*it)) it = moduleSet.erase(it);
-// 					else ++it;
-// 				}
-// 			};
-// 
-// 			// Remove both sets modules
-// 			removeModules(matchSet);
-// 			for (auto&[key, val] : found) removeModules(val);
-// 
-// 			found.merge(matchAgainst);
-// 
-// 			return found;
-// 		}
 	};
 }

@@ -14,7 +14,6 @@ namespace Silent
 		System_Camera(SystemPriority priority = 2) : System(priority){}
 		virtual ~System_Camera() = default;
 
-		virtual void UpdateEntities(Modules& modules) override;
 		virtual void Execute() override;
 		virtual void Cleanup() override;
 
@@ -23,8 +22,6 @@ namespace Silent
 		void UpdateCameraVectors();
 
 		virtual void ForceUpdateModules(Modules& modules) override;
-
-
 		virtual void IncrementalUpdateModules(Modules& modules) override;
 
 	};

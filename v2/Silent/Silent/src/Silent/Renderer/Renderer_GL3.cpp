@@ -389,12 +389,12 @@ namespace Silent
 		Buffer_GL3& buffer = buffers[bufferID];
 // 		if (buffer.MSAALevel != 1)
 // 		{
-// 		}
+// 		} 
 
 		glViewport(0, 0, (GLint) windowSize.x, (GLint) windowSize.y);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, (GLuint) buffer.framebuffer);
-
+		
 		ImVec2 start = { posX, posY };
 		ImVec2 end = { posX + sizeX, posY + sizeY };
 
@@ -755,8 +755,8 @@ namespace Silent
 		AddAttribute(3, 3, size, offsetof(Vertex, Vertex::Tangent), newMesh);
 		AddAttribute(4, 3, size, offsetof(Vertex, Vertex::Bitangent), newMesh);
 
-		glm::mat4 matrices[MaxBatchSize];
-		CreateVBO(newMesh.VAO, newMesh.iVBO, MaxBatchSize * instanceSize,
+		glm::mat4 matrices[MaxBatchSize<glm::mat4>()];
+		CreateVBO(newMesh.VAO, newMesh.iVBO, MaxBatchSize<glm::mat4>() * instanceSize,
 				  &matrices[0], GL_DYNAMIC_DRAW);
 
 		AddInstancedAttribute(newMesh.VAO, newMesh.iVBO, 5, 4, instanceSize, 0);
