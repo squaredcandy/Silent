@@ -10,7 +10,7 @@ namespace Silent
 		static auto& modules = Singleton<Modules>::Instance();
 		for (auto& sys : systems)
 		{
-			sys->IncrementalUpdateModules(modules);
+			sys->UpdateEntities(modules);
 		}
 		modules.UpdateTypesModified();
 	}

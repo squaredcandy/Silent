@@ -13,4 +13,5 @@ void main()
 	vec2 scaledTex = vec2((texCoord.x + float(x)) / width, 
 						  (texCoord.y + float(y)) / height);
 	FragColor = texture(sprite, scaledTex);
+	//FragColor = vec3(1,0,0);
 }

@@ -5,6 +5,26 @@
 
 namespace Silent
 {
+	void System_Camera::UpdateEntities(Modules& modules)
+	{
+		// I need to move this to the transform module
+		if (modules.TypeModified<Module_Camera>())
+		{
+			auto newMods = modules.GetModulesAddedThisFrame<Module_Camera>(true);
+			_modules = modules.GetModulesFiltered<Module_Camera>(newMods);
+			for (auto mod : _modules[typeid(Module_Camera)])
+			{
+				auto cam = dynamic_cast<Module_Camera*>(mod);
+				if (cam->currentCamera)
+				{
+					// we use the first current camera we can find
+					_camera = cam;
+					return;
+				}
+			}
+		}
+	}
+
 	void System_Camera::Execute()
 	{
 		// Should have a better check for if we have a current camera or not
@@ -75,50 +95,12 @@ namespace Silent
 
 	void System_Camera::ForceUpdateModules(Modules& modules)
 	{
-		// I need to move this to the transform module
-		if (modules.TypeModified<Module_Camera>())
-		{
-			_modules = modules.GetModulesUnfiltered<Module_Camera>(true);
-			for (auto mod : _modules[typeid(Module_Camera)])
-			{
-				auto cam = dynamic_cast<Module_Camera*>(mod);
-				if (cam->currentCamera)
-				{
-					// we use the first current camera we can find
-					_camera = cam;
-					return;
-				}
-			}
-		}
+		throw std::logic_error("The method or operation is not implemented.");
 	}
 
 	void System_Camera::IncrementalUpdateModules(Modules& modules)
 	{
-		for (auto&[key, val] : _modules)
-		{
-			for (auto cont = val.begin(); cont != val.end();)
-			{
-				if ((*cont) == nullptr) cont = val.erase(cont);
-				else ++cont;
-			}
-		}
-
-		// I need to move this to the transform module
-		if (modules.TypeModified<Module_Camera>())
-		{
-			auto newMods = modules.GetModulesAddedThisFrame<Module_Camera>(true);
-			_modules = modules.GetModulesFiltered<Module_Camera>(newMods);
-			for (auto mod : _modules[typeid(Module_Camera)])
-			{
-				auto cam = dynamic_cast<Module_Camera*>(mod);
-				if (cam->currentCamera)
-				{
-					// we use the first current camera we can find
-					_camera = cam;
-					return;
-				}
-			}
-		}
+		throw std::logic_error("The method or operation is not implemented.");
 	}
 
 }
