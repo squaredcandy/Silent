@@ -15,9 +15,6 @@ namespace Silent
 		System(SystemPriority priority = 0) : _priority(priority) {}
 		virtual ~System() = default;
 		
-		
-		/*[[deprecated]] */virtual void UpdateEntities(Modules& modules) = 0;
-
 		// This basiclly tells the system to start from scratch
 		virtual void ForceUpdateModules(Modules& modules) = 0;
 
