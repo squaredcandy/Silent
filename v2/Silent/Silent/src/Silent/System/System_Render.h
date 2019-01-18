@@ -25,12 +25,13 @@ namespace Silent
 		std::map<ModelStructure, std::vector<glm::mat4>> _models;
 
 		MapTypeToConAModule _modules;
-		Module_Camera * _camera;
+		std::shared_ptr<Module_Camera> _camera;
 		
 		inline glm::vec3 GetFaceCameraVector();
 		inline glm::mat4 GetProjectionMatrix(ImVec2& size);
 		inline glm::mat4 GetViewMatrix();
 		inline glm::mat4 GetModelMatrix(const Module_Transform * tf);
+		inline glm::mat4 GetModelMatrix(const std::shared_ptr<Module_Transform> tf);
 
 	public:
 		System_Render(SystemPriority priority = 1000) : System(priority){}

@@ -33,7 +33,7 @@ namespace Silent
 	using AModule = Module *;
 
 	// Selected Module Ptr
-	using ModulePtr = UModule;
+	using ModulePtr = SModule;
 
 	struct ModulePtrComparitor
 	{
@@ -52,10 +52,10 @@ namespace Silent
 	};
 
 	// Container of module Ptr's
-	using ConModulePtr = std::set<ModulePtr, ModulePtrComparitor>;
+	using ConModulePtr = std::vector<ModulePtr>;
 
 	// Container of Module * - Used for returns
-	using ConAModule = std::set<AModule, AModuleComparitor>;
+	using ConAModule = std::vector<ModulePtr>; // AModule
 	
 	// Mapping the type index to a container module ptr
 	using MapTypeToConModulePtr = std::map<std::type_index, ConModulePtr>;
@@ -133,7 +133,7 @@ namespace Silent
 		}
 
 		template<typename T, typename... TArgs>
-		T* AddModule(std::shared_ptr<Entity> entity, TArgs&&... mArgs)
+		std::shared_ptr<T> AddModule(std::shared_ptr<Entity> entity, TArgs&&... mArgs)
 		{
 			// Do we have the module?
 			if (!modules.count(typeid(T)))
@@ -150,18 +150,18 @@ namespace Silent
 			T* m(new T(std::forward<TArgs>(mArgs)...));
 			m->_entity = entity;
 			ModulePtr uPtr{ m };
-			auto success = modules[typeid(T)].insert(std::move(uPtr));
+			auto success = modules[typeid(T)].emplace_back(std::move(uPtr));
 			typesModified[typeid(T)] = true;
 			typesCounter[typeid(T)].first++;
 
 			// Add a reference to it in the entity for quick query and retrival
 			entity->modules.emplace(typeid(T));
 
-			return dynamic_cast<T*>(success.first->get());
+			return std::dynamic_pointer_cast<T>(success);
 		}
 
 		template<typename T>
-		T* GetModule(std::shared_ptr<Entity> entity)
+		std::shared_ptr<T> GetModule(std::shared_ptr<Entity> entity)
 		{
 			// Do we have the module?
 			if (!modules.count(typeid(T)))
@@ -174,7 +174,7 @@ namespace Silent
 			{
 				if (mod->_entity == entity)
 				{
-					return dynamic_cast<T*>(mod.get());
+					return std::dynamic_pointer_cast<T>(mod);
 				}
 			}
 			return nullptr;
@@ -207,7 +207,7 @@ namespace Silent
 			for (auto it = std::next(modules[typeid(T)].begin(), sizeDiff);
 				 it != modules[typeid(T)].end(); ++it)
 			{
-				map[typeid(T)].emplace((*it).get());
+				map[typeid(T)].emplace_back((*it));
 			}
 
 			return map;
@@ -226,7 +226,7 @@ namespace Silent
 				for (auto it = std::next(modules[type].begin(), sizeDiff);
 					 it != modules[type].end(); ++it)
 				{
-					map[type].emplace((*it).get());
+					map[type].emplace_back((*it));
 				}
 			}
 
@@ -245,7 +245,7 @@ namespace Silent
 			for (auto& m : filter[typeid(T)])
 			{
 				if (onlyActive && !m->_entity->_active) continue;
-				map[typeid(T)].emplace(m);
+				map[typeid(T)].emplace_back(m);
 			}
 
 			return map;
@@ -264,7 +264,7 @@ namespace Silent
 			for (auto& m : modules[typeid(T)])
 			{
 				if (onlyActive && !m->_entity->_active) continue;
-				map[typeid(T)].emplace(m.get());
+				map[typeid(T)].emplace_back(m);
 			}
 
 			return map;
@@ -301,7 +301,7 @@ namespace Silent
 					if (std::find(ids.begin(), ids.end(),
 								  mod->_entity->_entityID) != ids.end())
 					{
-						map[type].emplace(mod);
+						map[type].emplace_back(mod);
 					}
 				}
 			}
@@ -342,7 +342,7 @@ namespace Silent
 					if (std::find(ids.begin(), ids.end(),
 								  mod->_entity->_entityID) != ids.end())
 					{
-						map[type].emplace(mod.get());
+						map[type].emplace_back(mod);
 					}
 				}
 			}

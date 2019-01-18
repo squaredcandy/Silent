@@ -56,6 +56,21 @@ namespace Silent
 		return model;
 	}
 
+	glm::mat4 System_Render::GetModelMatrix(const std::shared_ptr<Module_Transform> tf)
+	{
+		const glm::vec3 xRot{ 1, 0, 0 };
+		const glm::vec3 yRot{ 0, 1, 0 };
+		const glm::vec3 zRot{ 0, 0, 1 };
+
+		// Translate -> Scale -> Rotate
+		auto model = glm::translate(glm::mat4(), tf->_translate);
+		model = glm::scale(model, tf->_scale);
+		model = glm::rotate(model, glm::radians(tf->_rotate.x), xRot);
+		model = glm::rotate(model, glm::radians(tf->_rotate.y), yRot);
+		model = glm::rotate(model, glm::radians(tf->_rotate.z), zRot);
+		return model;
+	}
+
 	void System_Render::Execute()
 	{
 		bool a = true;
@@ -162,9 +177,9 @@ namespace Silent
 		if (modules.TypeModified<Module_Camera>())
 		{
 			_modules = modules.GetModulesUnfiltered<Module_Camera>(true);
-			for (auto mod : _modules[typeid(Module_Camera)])
+			for (const auto& mod : _modules[typeid(Module_Camera)])
 			{
-				auto cam = dynamic_cast<Module_Camera*>(mod);
+				auto cam = std::dynamic_pointer_cast<Module_Camera>(mod);
 				if (cam->currentCamera)
 				{
 					// we use the first current camera we can find
@@ -188,11 +203,11 @@ namespace Silent
 
 			for (auto i = 0; i < size; ++i)
 			{
-				auto rdr = dynamic_cast<Module_Render*>(*std::next(rdrBegin, i));
+				auto rdr = std::dynamic_pointer_cast<Module_Render>(*std::next(rdrBegin, i));
 				if (rdr->render)
 				{
-					auto tf = dynamic_cast<Module_Transform*>(*std::next(tfBegin, i));
-					auto mdl = dynamic_cast<Module_Model*>(*std::next(mdlBegin, i));
+					auto tf = std::dynamic_pointer_cast<Module_Transform>(*std::next(tfBegin, i));
+					auto mdl = std::dynamic_pointer_cast<Module_Model>(*std::next(mdlBegin, i));
 
 					_models[{ rdr->buffer, mdl->mesh, mdl->material }].
 						emplace_back(GetModelMatrix(tf));
@@ -217,9 +232,9 @@ namespace Silent
 		{
 			auto newMods = modules.GetModulesAddedThisFrame<Module_Camera>(true);
 			_modules = modules.GetModulesFiltered<Module_Camera>(newMods);
-			for (auto mod : _modules[typeid(Module_Camera)])
+			for (const auto& mod : _modules[typeid(Module_Camera)])
 			{
-				auto cam = dynamic_cast<Module_Camera*>(mod);
+				auto cam = std::dynamic_pointer_cast<Module_Camera>(mod);
 				if (cam->currentCamera)
 				{
 					// we use the first current camera we can find
@@ -245,11 +260,11 @@ namespace Silent
 			
 			for (auto i = 0; i < size; ++i)
 			{
-				auto rdr = dynamic_cast<Module_Render*>(*std::next(rdrBegin, i));
+				auto rdr = std::dynamic_pointer_cast<Module_Render>(*std::next(rdrBegin, i));
 				if (rdr->render)
 				{
-					auto tf = dynamic_cast<Module_Transform*>(*std::next(tfBegin, i));
-					auto mdl = dynamic_cast<Module_Model*>(*std::next(mdlBegin, i));
+					auto tf = std::dynamic_pointer_cast<Module_Transform>(*std::next(tfBegin, i));
+					auto mdl = std::dynamic_pointer_cast<Module_Model>(*std::next(mdlBegin, i));
 
 					_models[{ rdr->buffer, mdl->mesh, mdl->material }].
 						emplace_back(GetModelMatrix(tf));
