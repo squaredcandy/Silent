@@ -4,4 +4,11 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="..\Vendor\FastNoise.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Shaders\sprite.vert" />
+    <None Include="Data\Shaders\sprite.frag" />
+    <None Include="Data\Shaders\Layout.glsl" />
+    <None Include="Data\Shaders\basicLighting.vert" />
+    <None Include="Data\Shaders\basicLighting.frag" />
+  </ItemGroup>
 </Project>

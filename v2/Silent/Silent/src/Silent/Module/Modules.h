@@ -198,7 +198,20 @@ namespace Silent
 		}
 
 		template<typename T>
-		MapTypeToConAModule GetModulesAddedThisFrame(bool onlyActive)
+		bool WasAModuleRemovedThisFrame(bool onlyActive = true)
+		{
+			return typesCounter[typeid(T)].second != 0;
+		}
+
+		template<typename T, typename S, typename... Arg>
+		bool WasAModuleRemovedThisFrame(bool onlyActive = true)
+		{
+			return WasAModuleRemovedThisFrame<T>(onlyActive) || 
+				WasAModuleRemovedThisFrame<S, Arg...>(onlyActive);
+		}
+
+		template<typename T>
+		inline MapTypeToConAModule GetModulesAddedThisFrame(bool onlyActive = true)
 		{
 			MapTypeToConAModule map;
 
@@ -214,7 +227,7 @@ namespace Silent
 		}
 
 		template<typename T, typename S, typename... Arg>
-		MapTypeToConAModule GetModulesAddedThisFrame(bool onlyActive)
+		inline MapTypeToConAModule GetModulesAddedThisFrame(bool onlyActive = true)
 		{
 			static std::set<std::type_index> types{ typeid(T), typeid(S), typeid(Arg)... };
 			MapTypeToConAModule map;
@@ -234,10 +247,10 @@ namespace Silent
 		}
 
 		template<typename T>
-		MapTypeToConAModule GetModulesFiltered(MapTypeToConAModule& filter,
-											   bool onlyActive = true)
+		inline MapTypeToConAModule GetModulesFiltered(bool onlyActive = true)
 		{
 			MapTypeToConAModule map;
+			MapTypeToConAModule filter = GetModulesAddedThisFrame<T>(onlyActive);
 
 			// find the module type
 			if (!filter.count(typeid(T))) return map;
@@ -254,7 +267,7 @@ namespace Silent
 		// Template version of Get Modules
 		// Get all the modules of one type
 		template<typename T>
-		MapTypeToConAModule GetModulesUnfiltered(bool onlyActive)
+		MapTypeToConAModule GetModulesUnfiltered(bool onlyActive = true)
 		{
 			MapTypeToConAModule map;
 
@@ -271,10 +284,11 @@ namespace Silent
 		}
 
 		template<typename T, typename S, typename... Arg>
-		MapTypeToConAModule GetModulesFiltered(MapTypeToConAModule& filter, 
-											   bool onlyActive = true)
+		inline MapTypeToConAModule GetModulesFiltered(bool onlyActive = true)
 		{
 			MapTypeToConAModule map;
+			MapTypeToConAModule filter = GetModulesAddedThisFrame<T, S, Arg...>(onlyActive);
+
 			static std::set<std::type_index> types{ typeid(T), typeid(S), typeid(Arg)... };
 			for (const auto& type : types) if (!filter.count(type)) return map;
 
@@ -286,8 +300,8 @@ namespace Silent
 			{
 				const auto& mods = entity->modules;
 				//std::sort(mods.begin(), mods.end());
-				if (std::includes(types.begin(), types.end(),
-								  mods.begin(), mods.end()))
+				if (std::includes(mods.begin(), mods.end(),
+								  types.begin(), types.end()))
 				{
 					ids.emplace(entity->_entityID);
 				}
@@ -310,7 +324,7 @@ namespace Silent
 		}
 
 		template<typename T, typename S, typename... Arg>
-		MapTypeToConAModule GetModulesUnfiltered(bool onlyActive)
+		MapTypeToConAModule GetModulesUnfiltered(bool onlyActive = true)
 		{
 			MapTypeToConAModule map;
 			static std::set<std::type_index> types { typeid(T), typeid(S), typeid(Arg)... };

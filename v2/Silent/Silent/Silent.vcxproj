@@ -28,6 +28,8 @@
     <ClInclude Include="src\Silent\Resource\Resource_Shader.h" />
     <ClInclude Include="src\Silent\Resource\Resource_Texture.h" />
     <ClInclude Include="src\Silent\System\System_Camera.h" />
+    <ClInclude Include="src\Silent\System\System_Input.h" />
+    <ClInclude Include="src\Silent\System\System_Light.h" />
     <ClInclude Include="src\Silent\System\System_Render.h" />
     <ClInclude Include="src\Silent\Utility\PrecompiledHeader.h" />
     <ClInclude Include="src\Silent\Utility\Random.h" />
@@ -39,6 +41,9 @@
     <ClInclude Include="src\Silent\Utility\Singleton.h" />
     <ClInclude Include="src\Silent\System\System.h" />
     <ClInclude Include="src\Silent\System\Systems.h" />
+    <ClInclude Include="src\Silent\System\System_Debug.h" />
+    <ClInclude Include="src\Silent\System\System_Setting.h" />
+    <ClInclude Include="Utility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Vendor\FastNoise.cpp" />
@@ -59,6 +64,8 @@
     <ClCompile Include="src\Silent\Resource\Resource_Shader.cpp" />
     <ClCompile Include="src\Silent\Resource\Resource_Texture.cpp" />
     <ClCompile Include="src\Silent\System\System_Camera.cpp" />
+    <ClCompile Include="src\Silent\System\System_Input.cpp" />
+    <ClCompile Include="src\Silent\System\System_Light.cpp" />
     <ClCompile Include="src\Silent\System\System_Render.cpp" />
     <ClCompile Include="src\Silent\Utility\PrecompiledHeader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -72,6 +79,9 @@
     <ClCompile Include="src\Silent\Resource\Resources.cpp" />
     <ClCompile Include="src\Silent\Utility\Singleton.cpp" />
     <ClCompile Include="src\Silent\System\Systems.cpp" />
+    <ClCompile Include="src\Silent\System\System_Debug.cpp" />
+    <ClCompile Include="src\Silent\System\System_Setting.cpp" />
+    <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\Vendor\ImGui\imgui.natvis" />
@@ -111,10 +121,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -130,6 +144,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Vendor;$(SolutionDir)Silent\src\Silent\Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
+      <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Vendor\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -153,6 +168,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Vendor;$(SolutionDir)Silent\src\Silent\Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

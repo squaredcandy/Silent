@@ -19,12 +19,16 @@ namespace Silent
 		void RunSystems();
 
 		template<typename T, typename... TArgs>
-		void AddSystem(TArgs&&... mArgs)
+		T* AddSystem(TArgs&&... mArgs)
 		{
 			T* s(new T(std::forward<TArgs>(mArgs)...));
 			std::unique_ptr<System> uPtr{ s };
-			systems.emplace(std::move(uPtr));
+			auto success = systems.emplace(std::move(uPtr));
+			if (success.second) return dynamic_cast<T*>(success.first->get());
+			else return nullptr;
 		}
+
+		std::set<std::unique_ptr<System>>& GetSystems() { return systems; }
 
 		void Cleanup();
 	};

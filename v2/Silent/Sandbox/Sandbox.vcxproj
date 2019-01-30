@@ -97,6 +97,13 @@
     <ClCompile Include="..\Vendor\FastNoise.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Shaders\basicLighting.frag" />
+    <None Include="Data\Shaders\basicLighting.vert" />
+    <None Include="Data\Shaders\Layout.glsl" />
+    <None Include="Data\Shaders\sprite.frag" />
+    <None Include="Data\Shaders\sprite.vert" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -1,9 +1,8 @@
 #pragma once
 #include "../Core.h"
 #include "System.h"
-
-#include <ImGui/imgui.h>
-#include <tuple>
+#include "System_Light.h"
+#include "System_Camera.h"
 
 namespace Silent
 {
@@ -20,20 +19,25 @@ namespace Silent
 		bool operator<(const ModelStructure& other) const;
 	};
 
+	struct ModelMatrixStructure
+	{
+		std::vector<Module_Transform *> tf;
+		std::vector<glm::mat4> model;
+	};
+
+
 	class SILENT_API System_Render : public System
 	{
-		std::map<ModelStructure, std::vector<glm::mat4>> _models;
-
-		MapTypeToConAModule _modules;
-		Module_Camera * _camera;
-		
-		inline glm::vec3 GetFaceCameraVector();
-		inline glm::mat4 GetProjectionMatrix(ImVec2& size);
-		inline glm::mat4 GetViewMatrix();
+		std::map<ModelStructure, ModelMatrixStructure> _models;
 		inline glm::mat4 GetModelMatrix(const Module_Transform * tf);
 
+		void UpdateModelMatrix();
+
 	public:
-		System_Render(SystemPriority priority = 1000) : System(priority){}
+		System_Light * _lightSystem;
+		System_Camera * _cameraSystem;
+
+		System_Render(SystemPriority priority = 1000) : System("Renderer", priority) {}
 		virtual ~System_Render() = default;
 
 		virtual void Execute() override;
@@ -41,6 +45,8 @@ namespace Silent
 
 		virtual void ForceUpdateModules(Modules& modules) override;
 		virtual void IncrementalUpdateModules(Modules& modules) override;
+
+		virtual void DebugInfo() override;
 
 	};
 }

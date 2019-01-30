@@ -71,9 +71,18 @@ namespace Silent
 		// Parent ID
 		std::shared_ptr<Entity> _parent;
 
+		// Model Vectors
 		glm::vec3 _translate;
 		glm::vec3 _rotate; // I should store this a quaterion
 		glm::vec3 _scale;
+
+		// Direction Vectors
+		glm::vec3 _forwardVector;
+		glm::vec3 _upVector;
+		glm::vec3 _rightVector;
+
+		glm::mat4 _modelMatrix;
+		bool updateMatrix;
 
 		Module_Transform(std::string name = "", 
 						 std::shared_ptr<Entity> parent = nullptr,
@@ -86,29 +95,20 @@ namespace Silent
 	};
 
 	// Camera module
-	
 	class SILENT_API Module_Camera : public Module
 	{
 	public:
 		float fov = 45.f;
-		float nearPlane = 0.1f;
+		float nearPlane = 0.05f;
 		float farPlane = 1000000.f;
 
 		// Distance from the camera in 
 		// which we don't update the light
 		float lightDistance = 100.f;
 
+		// Move this to somewhere else
 		float translateSpeed = 5.f;
 		float rotateSpeed = 10.f;
-
-		glm::vec3 translation;
-		// may need to change this to quaterition
-		glm::vec3 rotation;	// yaw | pitch | roll
-
-		// Vectors
-		glm::vec3 forwardVector;
-		glm::vec3 upVector;
-		glm::vec3 rightVector;
 
 	public:
 		// Is this the current camera?
@@ -120,7 +120,7 @@ namespace Silent
 	};
 
 	// Mesh Module
-	class SILENT_API Resource;
+	//class SILENT_API Resource;
 	class SILENT_API Resource_Mesh;
 	class SILENT_API Resource_Material;
 	class SILENT_API Module_Model : public Module
@@ -146,24 +146,54 @@ namespace Silent
 		virtual ~Module_Render() = default;
 	};
 
+	// This class accepts input from somewhere and 
+	// translates it into something
+	// That is the plan
 	class SILENT_API Module_Input : public Module
 	{
 	protected:
 
 	public:
 		Module_Input() = default;
-		virtual  ~Module_Input() = default;
+		virtual ~Module_Input() = default;
+	};
+
+	enum LightType
+	{
+		PointLight			= 0,
+		SpotLight			= 1,
+		DirectionalLight	= 2
 	};
 
 	// This light is a base class for all the lights?
 	// - Point Light
 	// - Spot Light
 	// - Directional Light
-	class SILENT_API Module_Light_Base : public Module
+	class SILENT_API Module_Light : public Module
 	{
 	protected:
-
 	public:
+		LightType lightType;
+		glm::vec3 lightColor;
+		float size;
+		float falloffPower;
 
+		Module_Light() = default;
+		virtual ~Module_Light() = default;
 	};
 }
+
+//#include <reactphysics3d/reactphysics3d.h>
+//namespace rp3d = reactphysics3d;
+//namespace Silent
+//{
+//	class SILENT_API Module_Box_Collider : public Module
+//	{
+//	protected:
+//		rp3d::BoxShape * boxCollider;
+//	public:
+//		Module_Box_Collider(rp3d::Vector3 v = { 1, 1, 1 }) 
+//			: boxCollider(new rp3d::BoxShape(v)) {}
+//		virtual ~Module_Box_Collider() { delete boxCollider; }
+//	};
+//}

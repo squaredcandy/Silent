@@ -31,7 +31,11 @@
 //#include "Silent/Module/Modules.cpp"
 
 #include "Silent/System/Systems.h"
+#include "Silent/System/System_Setting.h"
+#include "Silent/System/System_Input.h"
 #include "Silent/System/System_Camera.h"
+#include "Silent/System/System_Light.h"
+#include "Silent/System/System_Debug.h"
 #include "Silent/System/System_Render.h"
 
 

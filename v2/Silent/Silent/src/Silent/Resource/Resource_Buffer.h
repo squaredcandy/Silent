@@ -4,7 +4,6 @@
 #include "Resource.h"
 
 #include "../Renderer/Renderer.h"
-#include <ImGui/imgui.h>
 
 namespace Silent
 {

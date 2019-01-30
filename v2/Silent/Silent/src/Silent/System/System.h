@@ -11,10 +11,31 @@ namespace Silent
 	protected:
 		bool _active = true;
 		int _priority;
+		MapTypeToConAModule _modules;
 	public:
-		System(SystemPriority priority = 0) : _priority(priority) {}
+		const std::string _name;
+
+		System(std::string name, SystemPriority priority = 0) 
+			: _name(name), _priority(priority) {}
 		virtual ~System() = default;
 		
+		bool operator<(const System& other) const
+		{
+			return _priority < other._priority;
+		}
+
+		virtual inline void RemoveNullModules()
+		{
+			for (auto&[key, val] : _modules)
+			{
+				for (auto cont = val.begin(); cont != val.end();)
+				{
+					if ((*cont) == nullptr) cont = val.erase(cont);
+					else ++cont;
+				}
+			}
+		}
+
 		// This basiclly tells the system to start from scratch
 		virtual void ForceUpdateModules(Modules& modules) = 0;
 
@@ -22,11 +43,10 @@ namespace Silent
 		// modules
 		virtual void IncrementalUpdateModules(Modules& modules) = 0;
 
+		// Display Debug Info
+		virtual void DebugInfo() {}
+
 		virtual void Execute() = 0;
 		virtual void Cleanup() = 0;
-		bool operator<(const System& other) const
-		{
-			return _priority < other._priority;
-		}
 	};
 }

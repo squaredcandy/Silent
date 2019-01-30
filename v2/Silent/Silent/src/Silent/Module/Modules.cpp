@@ -5,7 +5,8 @@
 namespace Silent
 {
 
-	const std::map<std::type_index, std::pair<int, int>>& Modules::GetModifiedCounter()
+	const std::map<std::type_index, std::pair<int, int>>& 
+		Modules::GetModifiedCounter()
 	{
 		return typesCounter;
 	}

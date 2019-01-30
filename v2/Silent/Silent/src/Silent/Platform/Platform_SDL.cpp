@@ -1,7 +1,6 @@
 #include "Platform_SDL.h"
 
 #include <stdio.h>
-#include <ImGui/imgui.h>
 #include <ImGui/imgui_impl_sdl.h>
 
 namespace Silent

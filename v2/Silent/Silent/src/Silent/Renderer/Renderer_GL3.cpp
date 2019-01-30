@@ -1,14 +1,18 @@
 #include "Renderer_GL3.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 //#include <GL/gl3w.h>
 #include <GL/gl3w.c>
 #include <SDL/SDL.h>
-//#include <ImGui/imgui.h>
 #include <ImGui/imgui_impl_sdl.h>
 #include <ImGui/imgui_impl_opengl3.h>
 
-#define TINYOBJLOADER_IMPLEMENTATION
-#include <tinyobjloader.h>
+
+//#define TINYOBJLOADER_IMPLEMENTATION
+//#include <tinyobjloader.h>
 
 #include <sstream>
 
@@ -716,12 +720,15 @@ namespace std
 			std::size_t const h1 (std::hash<glm::vec3>()(vertex.Position));
 			std::size_t const h2 (std::hash<glm::vec3>()(vertex.Normal));
 			std::size_t const h3 (std::hash<glm::vec2>()(vertex.TexCoords));
-			//std::size_t const h4 (std::hash<glm::vec3>()(vertex.Tangent));
-			//std::size_t const h5 (std::hash<glm::vec3>()(vertex.Bitangent));
+			std::size_t const h4 (std::hash<glm::vec3>()(vertex.Tangent));
+			std::size_t const h5 (std::hash<glm::vec3>()(vertex.Bitangent));
 
-			return (((h1 ^ 
-					(h2 << 1)) >> 1 ^ 
-					(h3 << 1)) << 1);
+			//return (((h1 ^ (h2 << 1)) >> 1 ^ (h3 << 1)) << 1);
+			return (((((h1 ^ 
+				(h2 << 1)) >> 1 ^ 
+				(h3 << 1)) >> 1 ^ 
+				(h4 << 1)) >> 1 ^
+				(h5 << 1)) << 1);
 		}
 	};
 }
@@ -858,6 +865,99 @@ namespace Silent
 		glBindVertexArray(0);
 	}
 
+
+	void ProcessMesh(Mesh_GL3& newMesh, aiMesh * mesh)
+	{
+		newMesh.vertices.reserve(mesh->mNumVertices);
+		for (GLuint i = 0; i < mesh->mNumVertices; ++i)
+		{
+			newMesh.vertices.emplace_back(Vertex());
+			auto& vertex = newMesh.vertices.back();
+
+			// Position
+			vertex.Position.x = mesh->mVertices[i].x;
+			vertex.Position.y = mesh->mVertices[i].y;
+			vertex.Position.z = mesh->mVertices[i].z;
+
+			// normals
+			vertex.Normal.x = mesh->mNormals[i].x;
+			vertex.Normal.y = mesh->mNormals[i].y;
+			vertex.Normal.z = mesh->mNormals[i].z;
+
+			// texture coordinates
+			if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
+			{
+				vertex.TexCoords.x = mesh->mTextureCoords[0][i].x;
+				vertex.TexCoords.y = mesh->mTextureCoords[0][i].y;
+			}
+			else
+			{
+				vertex.TexCoords = glm::vec2(0.0f, 0.0f);
+			}
+
+			// tangent
+			vertex.Tangent.x = mesh->mTangents[i].x;
+			vertex.Tangent.y = mesh->mTangents[i].y;
+			vertex.Tangent.z = mesh->mTangents[i].z;
+
+			// bitangent
+			vertex.Bitangent.x = mesh->mBitangents[i].x;
+			vertex.Bitangent.y = mesh->mBitangents[i].y;
+			vertex.Bitangent.z = mesh->mBitangents[i].z;
+		}
+		// now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
+		for (GLuint i = 0; i < mesh->mNumFaces; ++i)
+		{
+			aiFace face = mesh->mFaces[i];
+			// retrieve all indices of the face and store them in the indices vector
+			for (GLuint j = 0; j < face.mNumIndices; ++j)
+				newMesh.indices.emplace_back(face.mIndices[j]);
+		}
+	}
+
+	void ProcessNode(Mesh_GL3& newMesh, aiNode * node, const aiScene * scene)
+	{
+		for (GLuint i = 0; i < node->mNumMeshes; ++i)
+		{
+			aiMesh * mesh = scene->mMeshes[node->mMeshes[i]];
+			ProcessMesh(newMesh, mesh);
+		}
+		for (GLuint i = 0; i < node->mNumChildren; ++i)
+		{
+			ProcessNode(newMesh, node->mChildren[i], scene);
+		}
+	}
+
+	MeshID Renderer_GL3::LoadModel(std::string path)
+	{
+		Assimp::Importer importer;
+
+		const aiScene * scene =
+			importer.ReadFile(MESH_FOLDER + path,
+							  aiProcessPreset_TargetRealtime_MaxQuality);
+							  //aiProcess_Triangulate |
+							  //aiProcess_FlipUVs |
+							  //aiProcess_CalcTangentSpace |
+ 							  //aiProcess_OptimizeMeshes |
+ 							  //aiProcess_OptimizeGraph
+							  //aiProcess_JoinIdenticalVertices |
+							  /*aiProcess_SortByPType*///);
+
+		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
+			!scene->mRootNode) return 0u;
+
+		Mesh_GL3 newMesh;
+		ProcessNode(newMesh, scene->mRootNode, scene);
+
+		InitBuffer(newMesh);
+
+		MeshID newID = GenerateMeshID();
+		meshes[newID] = newMesh;
+
+		return newID;
+	}
+
+	/*
 	MeshID Renderer_GL3::LoadModel(std::string path)
 	{
 		tinyobj::attrib_t attrib;
@@ -882,8 +982,9 @@ namespace Silent
 			newMesh.indices.reserve(shape.mesh.indices.size());
 			for (const auto& idx : shape.mesh.indices)
 			{
-				Vertex& newVertex = newMesh.vertices.emplace_back(Vertex());
-
+				newMesh.vertices.emplace_back(Vertex());
+				Vertex& newVertex = newMesh.vertices.back();
+				
 				newVertex.Position = {
 					attrib.vertices[3 * idx.vertex_index + 0],
 					attrib.vertices[3 * idx.vertex_index + 1],
@@ -903,11 +1004,63 @@ namespace Silent
 
 				if (uniqueVerts.count(newVertex) == 0)
 				{
-					uniqueVerts[newVertex] = (GLuint)newMesh.indices.size();
+					uniqueVerts[newVertex] = (GLuint) newMesh.indices.size();
 				}
 
 				newMesh.indices.emplace_back(uniqueVerts[newVertex]);
 			}
+		}
+
+		// I dont know why this works but it does
+		for (auto i = 0; i < newMesh.vertices.size(); i += 3)
+		{
+			glm::vec3& v0 = newMesh.vertices[i + 0].Position;
+			glm::vec3& v1 = newMesh.vertices[i + 1].Position;
+			glm::vec3& v2 = newMesh.vertices[i + 2].Position;
+			//glm::vec3& v3 = newMesh.vertices[i + 3].Position;
+
+			glm::vec2& uv0 = newMesh.vertices[i + 0].TexCoords;
+			glm::vec2& uv1 = newMesh.vertices[i + 1].TexCoords;
+			glm::vec2& uv2 = newMesh.vertices[i + 2].TexCoords;
+			//glm::vec2& uv3 = newMesh.vertices[i + 3].TexCoords;
+
+			// Triangle 1
+			glm::vec3 dV0 = v1 - v0;
+			glm::vec3 dV1 = v2 - v0;
+
+			glm::vec2 dUV0 = uv1 - uv0;
+			glm::vec2 dUV1 = uv2 - uv0;
+
+			float r = 1.f / (dUV1.x * dUV1.y - dUV0.y * dUV1.x);
+			glm::vec3 tangent = glm::normalize((dV0 * dV1.y - dV1 * dV0.y) * r);
+			glm::vec3 bitangent = glm::normalize((dV1 * dV0.x - dV0 * dV1.x) * r);
+
+			newMesh.vertices[i + 0].Tangent = tangent;
+			newMesh.vertices[i + 1].Tangent = tangent;
+			newMesh.vertices[i + 2].Tangent = tangent;
+
+			newMesh.vertices[i + 0].Bitangent = bitangent;
+			newMesh.vertices[i + 1].Bitangent = bitangent;
+			newMesh.vertices[i + 2].Bitangent = bitangent;
+
+// 			// Triangle 2
+// 			dV0 = v2 - v0;
+// 			dV1 = v3 - v0;
+// 
+// 			dUV0 = uv2 - uv0;
+// 			dUV1 = uv3 - uv0;
+// 
+// 			r = 1.f / (dUV1.x * dUV1.y - dUV0.y * dUV1.x);
+// 			tangent = glm::normalize((dV0 * dV1.y - dV1 * dV0.y) * r);
+// 			bitangent = glm::normalize((dV1 * dV0.x - dV0 * dV1.x) * r);
+// 
+// 			newMesh.vertices[i + 3].Tangent = tangent;
+// 			newMesh.vertices[i + 4].Tangent = tangent;
+// 			newMesh.vertices[i + 5].Tangent = tangent;
+// 
+// 			newMesh.vertices[i + 3].Bitangent = bitangent;
+// 			newMesh.vertices[i + 4].Bitangent = bitangent;
+// 			newMesh.vertices[i + 5].Bitangent = bitangent;
 		}
 
 		//LOG_INFO("Model Loaded: %s\n", path.substr(path.find_last_of('/') + 1).c_str());
@@ -919,6 +1072,7 @@ namespace Silent
 
 		return newID;
 	}
+	 **/
 	
 	void Renderer_GL3::MapModelData(MeshID meshID, const std::vector<glm::mat4>& data)
 	{

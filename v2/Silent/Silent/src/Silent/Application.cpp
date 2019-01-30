@@ -9,6 +9,9 @@ namespace Silent
 		ents = &Singleton<Entities>::Instance();
 		mods = &Singleton<Modules>::Instance();
 		syss = &Singleton<Systems>::Instance();
+
+		settings = syss->AddSystem<System_Setting>();
+		debug = syss->AddSystem<System_Debug>(syss);
 	}
 
 	Application::~Application()

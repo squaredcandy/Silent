@@ -4,8 +4,7 @@
 
 #include <SDL/SDL.h>
 #include <ImGui/imgui.h>
-
-#include <glm/glm.hpp>
+#include <glm/mat4x4.hpp>
 
 #include <map>
 #include <any>
@@ -20,8 +19,6 @@ namespace Silent
 
 	// Apprently the optimal batch size is about 1-4MB
 	// Make a function that does 1,000,000 / sizeof(Type) to give a batch size
-	//const int MaxBatchSize = 1024;
-
 	const int BATCH_SIZE = 1000000;
 
 	template<typename T> 

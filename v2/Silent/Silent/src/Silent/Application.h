@@ -9,6 +9,8 @@
 #include "Module/Modules.h"
 #include "System/Systems.h"
 
+#include "System/System_Debug.h"
+
 namespace Silent {
 
 	class SILENT_API Application
@@ -20,6 +22,9 @@ namespace Silent {
 		Entities * ents;
 		Modules * mods;
 		Systems * syss;
+
+		System_Setting * settings;
+		System_Debug * debug;
 
 	public:
 		int platformType = SL_PLATFORM_NONE;
