@@ -22,18 +22,19 @@
     <ClInclude Include="src\Silent\Resource\Resources.h" />
     <ClInclude Include="src\Silent\Core.h" />
     <ClInclude Include="src\Silent\System\Systems.h" />
-    <ClInclude Include="src\Silent\Resource\Resource_Shader.h" />
-    <ClInclude Include="src\Silent\Resource\Resource_Mesh.h" />
-    <ClInclude Include="src\Silent\Resource\Resource_Texture.h" />
-    <ClInclude Include="src\Silent\Resource\Resource_Material.h" />
-    <ClInclude Include="src\Silent\System\System_Camera.h" />
-    <ClInclude Include="src\Silent\System\System_Render.h" />
-    <ClInclude Include="src\Silent\Resource\Resource_Buffer.h" />
-    <ClInclude Include="src\Silent\System\System_Input.h" />
-    <ClInclude Include="src\Silent\System\System_Light.h" />
-    <ClInclude Include="src\Silent\System\System_Setting.h" />
-    <ClInclude Include="src\Silent\System\System_Debug.h" />
-    <ClInclude Include="Utility.h" />
+    <ClInclude Include="src\Silent\Interface\Interface.h" />
+    <ClInclude Include="src\Silent\Utility\Utility.h" />
+    <ClInclude Include="src\Silent\System\SCamera.h" />
+    <ClInclude Include="src\Silent\System\SSetting.h" />
+    <ClInclude Include="src\Silent\Resource\RBuffer.h" />
+    <ClInclude Include="src\Silent\Resource\RMaterial.h" />
+    <ClInclude Include="src\Silent\Resource\RMesh.h" />
+    <ClInclude Include="src\Silent\Resource\RShader.h" />
+    <ClInclude Include="src\Silent\Resource\RTexture.h" />
+    <ClInclude Include="src\Silent\System\SDebug.h" />
+    <ClInclude Include="src\Silent\System\SInput.h" />
+    <ClInclude Include="src\Silent\System\SLight.h" />
+    <ClInclude Include="src\Silent\System\SRender.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Silent\Application.cpp" />
@@ -54,19 +55,21 @@
     <ClCompile Include="src\Silent\Utility\PrecompiledHeader.cpp" />
     <ClCompile Include="src\Silent\Resource\Resources.cpp" />
     <ClCompile Include="src\Silent\System\Systems.cpp" />
-    <ClCompile Include="src\Silent\Resource\Resource_Shader.cpp" />
-    <ClCompile Include="src\Silent\Resource\Resource_Mesh.cpp" />
-    <ClCompile Include="src\Silent\Resource\Resource_Texture.cpp" />
-    <ClCompile Include="src\Silent\Resource\Resource_Material.cpp" />
-    <ClCompile Include="src\Silent\System\System_Camera.cpp" />
-    <ClCompile Include="src\Silent\System\System_Render.cpp" />
-    <ClCompile Include="src\Silent\Resource\Resource_Buffer.cpp" />
     <ClCompile Include="..\Vendor\FastNoise.cpp" />
-    <ClCompile Include="src\Silent\System\System_Input.cpp" />
-    <ClCompile Include="src\Silent\System\System_Light.cpp" />
-    <ClCompile Include="src\Silent\System\System_Debug.cpp" />
-    <ClCompile Include="src\Silent\System\System_Setting.cpp" />
-    <ClCompile Include="Utility.cpp" />
+    <ClCompile Include="src\Silent\Interface\Interface.cpp" />
+    <ClCompile Include="src\Silent\Utility\Utility.cpp" />
+    <ClCompile Include="src\Silent\System\SCamera.cpp" />
+    <ClCompile Include="src\Silent\Resource\RBuffer.cpp" />
+    <ClCompile Include="src\Silent\Resource\Resource.cpp" />
+    <ClCompile Include="src\Silent\Resource\RMaterial.cpp" />
+    <ClCompile Include="src\Silent\Resource\RMesh.cpp" />
+    <ClCompile Include="src\Silent\Resource\RShader.cpp" />
+    <ClCompile Include="src\Silent\Resource\RTexture.cpp" />
+    <ClCompile Include="src\Silent\System\SDebug.cpp" />
+    <ClCompile Include="src\Silent\System\SInput.cpp" />
+    <ClCompile Include="src\Silent\System\SLight.cpp" />
+    <ClCompile Include="src\Silent\System\SRender.cpp" />
+    <ClCompile Include="src\Silent\System\SSetting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\Vendor\ImGui\imgui.natvis" />

@@ -9,7 +9,7 @@
 #include "Module/Modules.h"
 #include "System/Systems.h"
 
-#include "System/System_Debug.h"
+#include "System/SDebug.h"
 
 namespace Silent {
 
@@ -23,8 +23,8 @@ namespace Silent {
 		Modules * mods;
 		Systems * syss;
 
-		System_Setting * settings;
-		System_Debug * debug;
+		SSetting * settings;
+		SDebug * debug;
 
 	public:
 		int platformType = SL_PLATFORM_NONE;

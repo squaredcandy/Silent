@@ -1,34 +1,40 @@
 #pragma once
 #include "../Core.h"
 #include "System.h"
-#include "System_Camera.h"
+#include "SCamera.h"
 
 namespace Silent
 {
 	struct LightStruct
 	{
-		Module_Transform * _tf;
-		Module_Light * _light;
+		std::shared_ptr<MTransform> _tf;
+		std::shared_ptr<MLight> _light;
 
 		LightStruct() :_tf(nullptr), _light(nullptr) {}
-		LightStruct(Module_Transform * tf, Module_Light * light)
+		//LightStruct(MTransform * tf, MLight * light)
+		//	: _tf(tf), _light(light) {}
+		LightStruct(std::shared_ptr<MTransform> tf, 
+					std::shared_ptr<MLight> light)
 			: _tf(tf), _light(light) {}
 		~LightStruct() = default;
 
 		glm::vec3& Translation() { return _tf->_translate; }
 	};
 
-	class SILENT_API System_Light : public System
+	class SILENT_API SLight : public System
 	{
 	protected:
 		std::vector<LightStruct> _lights;
 		glm::vec3 cameraPos;
-	public:
-		System_Camera * _cameraSystem;
 
-		System_Light(SystemPriority priority = 20)
+		void UpdateLights();
+
+	public:
+		SCamera * _cameraSystem;
+
+		SLight(SystemPriority priority = 20)
 			: System("Lights", priority) {}
-		virtual ~System_Light() = default;
+		virtual ~SLight() = default;
 
 		std::vector<LightStruct>& GetLights() { return _lights; }
 		// This is to return a number of lights

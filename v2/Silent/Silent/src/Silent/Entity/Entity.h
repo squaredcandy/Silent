@@ -1,6 +1,7 @@
 #pragma once
 
 #include <set>
+#include <vector>
 #include <typeindex>
 
 namespace Silent
@@ -14,13 +15,16 @@ namespace Silent
 		return id++;
 	}
 
+	class SILENT_API Module;
+
 	class SILENT_API Entity
 	{
 	public:
 		EntityID _entityID = GenerateEntityID();
 		bool _active = true;
 
-		std::set<std::type_index> modules;
+		std::set<std::type_index> modTypes;
+		std::vector<Module *> mods;
 
 		Entity() = default;
 		~Entity() = default;

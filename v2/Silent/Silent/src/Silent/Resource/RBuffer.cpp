@@ -1,13 +1,13 @@
-#include "Resource_Buffer.h"
+#include "RBuffer.h"
 
 namespace Silent
 {
-	Resource_Buffer::Resource_Buffer(std::string name)
+	RBuffer::RBuffer(std::string name)
 	{
 
 	}
 
-	Resource_Buffer::Resource_Buffer(std::string name, Renderer * renderer,
+	RBuffer::RBuffer(std::string name, Renderer * renderer,
 									 bool useFramebuffer,  bool useColorbuffer, 
 									 bool useDepthbuffer) : _renderer(renderer),
 		useFrame(useFramebuffer), useColor(useColorbuffer), 
@@ -17,34 +17,34 @@ namespace Silent
 										   useColorbuffer, useDepthbuffer);
 	}
 
-	int Resource_Buffer::GetMultisampleLevel() const
+	int RBuffer::GetMultisampleLevel() const
 	{
 		return _MSAALevel;
 	}
 
-	Silent::BufferID Resource_Buffer::GetBufferID() const
+	Silent::BufferID RBuffer::GetBufferID() const
 	{
 		return _bufferID;
 	}
 
-	void Resource_Buffer::BindColorbuffer()
+	void RBuffer::BindColorbuffer()
 	{
 		_renderer->BindColorbufferToFramebuffer(_bufferID);
 	}
 
-	void Resource_Buffer::BindDepthbuffer()
+	void RBuffer::BindDepthbuffer()
 	{
 		_renderer->BindDepthbufferToFramebuffer(_bufferID);
 	}
 
-	void Resource_Buffer::Begin()
+	void RBuffer::Begin()
 	{
 		if(useColor) BindColorbuffer();
 		if(useDepth) BindDepthbuffer();
 		_renderer->BeginFramebufferDrawing(_bufferID);
 	}
 
-	void Resource_Buffer::End()
+	void RBuffer::End()
 	{
 		// we need something here so that it doesnt push an image to imgui
 		auto pos = ImGui::GetWindowPos();
@@ -54,7 +54,7 @@ namespace Silent
 										 pos.x, pos.y);
 	}
 
-	void Resource_Buffer::Cleanup()
+	void RBuffer::Cleanup()
 	{
 
 	}

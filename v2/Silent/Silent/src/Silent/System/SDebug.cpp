@@ -1,16 +1,16 @@
-#include "System_Debug.h"
+#include "SDebug.h"
 
 namespace Silent
 {
-	void System_Debug::ForceUpdateModules(Modules& modules)
+	void SDebug::ForceUpdateModules(Modules& modules)
 	{
 	}
 
-	void System_Debug::IncrementalUpdateModules(Modules& modules)
+	void SDebug::IncrementalUpdateModules(Modules& modules)
 	{
 	}
 
-	void System_Debug::Execute()
+	void SDebug::Execute()
 	{
 		auto a = true;
 		auto& systems = _systems->GetSystems();
@@ -56,7 +56,7 @@ namespace Silent
 		ImGui::End();
 	}
 
-	void System_Debug::Cleanup()
+	void SDebug::Cleanup()
 	{
 	}
 }

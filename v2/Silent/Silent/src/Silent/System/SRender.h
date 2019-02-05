@@ -1,19 +1,19 @@
 #pragma once
 #include "../Core.h"
 #include "System.h"
-#include "System_Light.h"
-#include "System_Camera.h"
+#include "SLight.h"
+#include "SCamera.h"
 
 namespace Silent
 {
-	class SILENT_API Resource_Buffer;
-	class SILENT_API Resource_Mesh;
-	class SILENT_API Resource_Material;
+	class SILENT_API RBuffer;
+	class SILENT_API RMesh;
+	class SILENT_API RMaterial;
 	struct ModelStructure
 	{
-		std::shared_ptr<Resource_Buffer> buffer;
-		std::shared_ptr<Resource_Mesh> mesh;
-		std::shared_ptr<Resource_Material> material;
+		std::shared_ptr<RBuffer> buffer;
+		std::shared_ptr<RMesh> mesh;
+		std::shared_ptr<RMaterial> material;
 
 		bool operator==(const ModelStructure& other) const;
 		bool operator<(const ModelStructure& other) const;
@@ -21,24 +21,25 @@ namespace Silent
 
 	struct ModelMatrixStructure
 	{
-		std::vector<Module_Transform *> tf;
+		std::vector<std::shared_ptr<MTransform>> tf;
 		std::vector<glm::mat4> model;
 	};
 
 
-	class SILENT_API System_Render : public System
+	class SILENT_API SRender : public System
 	{
 		std::map<ModelStructure, ModelMatrixStructure> _models;
-		inline glm::mat4 GetModelMatrix(const Module_Transform * tf);
 
+		void UpdateModels();
 		void UpdateModelMatrix();
 
 	public:
-		System_Light * _lightSystem;
-		System_Camera * _cameraSystem;
+		SLight * _lightSystem;
+		SCamera * _cameraSystem;
 
-		System_Render(SystemPriority priority = 1000) : System("Renderer", priority) {}
-		virtual ~System_Render() = default;
+		SRender(SystemPriority priority = 1000) : 
+			System("Renderer", priority) {}
+		virtual ~SRender() = default;
 
 		virtual void Execute() override;
 		virtual void Cleanup() override;

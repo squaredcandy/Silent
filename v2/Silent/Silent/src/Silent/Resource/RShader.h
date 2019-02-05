@@ -6,7 +6,7 @@
 
 namespace Silent
 {
-	class SILENT_API Resource_Shader : public Resource
+	class SILENT_API RShader : public Resource
 	{
 	protected:
 		bool _initialized;
@@ -14,12 +14,12 @@ namespace Silent
 
 		Renderer * _renderer;
 	public:
-		Resource_Shader(std::string name = "");
-		Resource_Shader(std::string name, Renderer * renderer,
+		RShader(std::string name = "");
+		RShader(std::string name, Renderer * renderer,
 						bool useVert = true, bool useFrag = true,
 						bool useGeom = false, bool useTess = false,
 						bool useComp = false);
-		virtual ~Resource_Shader() = default;
+		virtual ~RShader() = default;
 		
 		inline void SetActive();
 		inline void SetUniform(const std::string& name, const std::any& val);

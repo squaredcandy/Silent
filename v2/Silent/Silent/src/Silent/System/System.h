@@ -11,7 +11,7 @@ namespace Silent
 	protected:
 		bool _active = true;
 		int _priority;
-		MapTypeToConAModule _modules;
+		MapTypeToConModulePtr _modules;
 	public:
 		const std::string _name;
 

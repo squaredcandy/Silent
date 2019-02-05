@@ -1,8 +1,9 @@
-#include "System_Render.h"
+#include "SRender.h"
 
-#include "../Resource/Resource_Material.h"
-#include "../Resource/Resource_Mesh.h"
-#include "../Resource/Resource_Buffer.h"
+#include "../Resource/RMaterial.h"
+#include "../Resource/RMesh.h"
+#include "../Resource/RBuffer.h"
+#include "../Interface/Interface.h"
 
 namespace Silent
 {
@@ -20,22 +21,7 @@ namespace Silent
 			material->GetMaterialID() < other.material->GetMaterialID();
 	}
 
-	glm::mat4 System_Render::GetModelMatrix(const Module_Transform * tf)
-	{
-		const glm::vec3 xRot{ 1, 0, 0 };
-		const glm::vec3 yRot{ 0, 1, 0 };
-		const glm::vec3 zRot{ 0, 0, 1 };
-
-		// Translate -> Scale -> Rotate
-		auto model = glm::translate(glm::mat4(), tf->_translate);
-		model = glm::scale(model, tf->_scale);
-		model = glm::rotate(model, glm::radians(tf->_rotate.x), xRot);
-		model = glm::rotate(model, glm::radians(tf->_rotate.y), yRot);
-		model = glm::rotate(model, glm::radians(tf->_rotate.z), zRot);
-		return model;
-	}
-
-	void System_Render::UpdateModelMatrix()
+	void SRender::UpdateModelMatrix()
 	{
 		for (auto& [key, model] : _models)
 		{
@@ -44,13 +30,14 @@ namespace Silent
 			{
 				if (model.tf[i]->updateMatrix)
 				{
-					model.model[i] = GetModelMatrix(model.tf[i]);
+					model.model[i] = 
+						ITransform::UpdateModelMatrix(model.tf[i].get());
 				}
 			}
 		}
 	}
 
-	void System_Render::Execute()
+	void SRender::Execute()
 	{
 		UpdateModelMatrix();
 		bool a = true;
@@ -163,82 +150,67 @@ namespace Silent
 
 			ImGui::SliderFloat("Camera Speed", 
 				&_cameraSystem->GetCameras()._camera->translateSpeed, 
-							   0.5f, 10.f);
+							   0.1f, 10.f);
 
 		}
 		ImGui::End();
 	}
 
-	void System_Render::Cleanup()
+	void SRender::Cleanup()
 	{
 
 	}
 
-	void System_Render::ForceUpdateModules(Modules& modules)
+	void SRender::UpdateModels()
 	{
-		// Get the models
-		if (modules.TypeModified<Module_Transform, Module_Model, Module_Render>())
+		auto& renderModules = _modules[typeid(MRender)];
+		auto size = renderModules.size();
+
+		auto tfBegin = _modules[typeid(MTransform)].begin();
+		auto mdlBegin = _modules[typeid(MModel)].begin();
+		auto rdrBegin = _modules[typeid(MRender)].begin();
+
+		for (auto i = 0; i < size; ++i)
 		{
-			_modules = modules.GetModulesUnfiltered
-				<Module_Transform, Module_Model, Module_Render>();
-			auto& renderModules = _modules[typeid(Module_Render)];
-			auto size = renderModules.size();
-
-			auto tfBegin = _modules[typeid(Module_Transform)].begin();
-			auto mdlBegin = _modules[typeid(Module_Model)].begin();
-			auto rdrBegin = _modules[typeid(Module_Render)].begin();
-
-			for (auto i = 0; i < size; ++i)
+			auto rdr = std::dynamic_pointer_cast<MRender>(*std::next(rdrBegin, i));
+			if (rdr->render)
 			{
-				auto rdr = dynamic_cast<Module_Render*>(*std::next(rdrBegin, i));
-				if (rdr->render)
-				{
-					auto tf = dynamic_cast<Module_Transform*>(*std::next(tfBegin, i));
-					auto mdl = dynamic_cast<Module_Model*>(*std::next(mdlBegin, i));
+				auto tf = std::dynamic_pointer_cast<MTransform>(*std::next(tfBegin, i));
+				auto mdl = std::dynamic_pointer_cast<MModel>(*std::next(mdlBegin, i));
 
-					auto& matrixStruct = _models[{ rdr->buffer, mdl->mesh, mdl->material }];
-					matrixStruct.tf.emplace_back(tf);
-					tf->_modelMatrix = GetModelMatrix(tf);
-					matrixStruct.model.emplace_back(tf->_modelMatrix);
-				}
+				auto& matrixStruct = _models[{ rdr->buffer, mdl->mesh, mdl->material }];
+				matrixStruct.tf.emplace_back(tf);
+				tf->_modelMatrix = ITransform::UpdateModelMatrix(tf.get());
+				matrixStruct.model.emplace_back(tf->_modelMatrix);
 			}
 		}
 	}
 
-	void System_Render::IncrementalUpdateModules(Modules& modules)
+	void SRender::ForceUpdateModules(Modules& modules)
+	{
+		// Get the models
+		if (modules.TypeModified<MTransform, MModel, MRender>())
+		{
+			_modules = modules.GetModules
+				<MTransform, MModel, MRender>(false);
+			UpdateModels();
+		}
+	}
+
+	void SRender::IncrementalUpdateModules(Modules& modules)
 	{
 		RemoveNullModules();
 
 		// Get the models
-		if (modules.TypeModified<Module_Transform, Module_Model, Module_Render>())
+		if (modules.TypeModified<MTransform, MModel, MRender>())
 		{
-			_modules = modules.GetModulesFiltered
-				<Module_Transform, Module_Model, Module_Render>();
-			auto& renderModules = _modules[typeid(Module_Render)];
-			auto size = renderModules.size();
-
-			auto tfBegin = _modules[typeid(Module_Transform)].cbegin();
-			auto mdlBegin = _modules[typeid(Module_Model)].cbegin();
-			auto rdrBegin = _modules[typeid(Module_Render)].cbegin();
-			
-			for (auto i = 0; i < size; ++i)
-			{
-				auto rdr = dynamic_cast<Module_Render*>(*std::next(rdrBegin, i));
-				if (rdr->render)
-				{
-					auto tf = dynamic_cast<Module_Transform*>(*std::next(tfBegin, i));
-					auto mdl = dynamic_cast<Module_Model*>(*std::next(mdlBegin, i));
-
-					auto& matrixStruct = _models[{ rdr->buffer, mdl->mesh, mdl->material }];
-					matrixStruct.tf.emplace_back(tf);
-					tf->_modelMatrix = GetModelMatrix(tf);
-					matrixStruct.model.emplace_back(tf->_modelMatrix);
-				}
-			}
+			_modules = modules.GetModules
+				<MTransform, MModel, MRender>();
+			UpdateModels();
 		}
 	}
 
-	void System_Render::DebugInfo()
+	void SRender::DebugInfo()
 	{
 
 	}

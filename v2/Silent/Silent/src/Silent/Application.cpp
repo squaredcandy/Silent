@@ -10,8 +10,8 @@ namespace Silent
 		mods = &Singleton<Modules>::Instance();
 		syss = &Singleton<Systems>::Instance();
 
-		settings = syss->AddSystem<System_Setting>();
-		debug = syss->AddSystem<System_Debug>(syss);
+		settings = syss->AddSystem<SSetting>();
+		debug = syss->AddSystem<SDebug>(syss);
 	}
 
 	Application::~Application()

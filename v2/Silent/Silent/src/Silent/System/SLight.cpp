@@ -1,9 +1,9 @@
-#include "System_Light.h"
+#include "SLight.h"
 
 namespace Silent
 {
 
-	std::vector<LightStruct> System_Light::GetLights(int num)
+	std::vector<LightStruct> SLight::GetLights(int num)
 	{
 		return std::vector<LightStruct>(_lights.begin(),
 			(num < _lights.size()) ? 
@@ -12,7 +12,7 @@ namespace Silent
 		);
 	}
 
-	void System_Light::Execute()
+	void SLight::Execute()
 	{
 		if (_lights.size() == 1) return;
 		if (cameraPos == _cameraSystem->GetCameras().Translation()) return;
@@ -29,52 +29,45 @@ namespace Silent
 		std::sort(_lights.begin(), _lights.end(), checkDistance);
 	}
 
-	void System_Light::Cleanup()
+	void SLight::Cleanup()
 	{
 
 	}
 
-	void System_Light::ForceUpdateModules(Modules& modules)
+	void SLight::UpdateLights()
 	{
-		if (modules.TypeModified<Module_Light, Module_Transform>())
+		auto size = _modules[typeid(MTransform)].size();
+
+		auto tfBegin = _modules[typeid(MTransform)].cbegin();
+		auto ltBegin = _modules[typeid(MLight)].cbegin();
+
+		for (int i = 0; i < size; ++i)
 		{
-			_modules = modules.
-				GetModulesUnfiltered<Module_Light, Module_Transform>();
-
-			auto size = _modules[typeid(Module_Transform)].size();
-
-			auto tfBegin = _modules[typeid(Module_Transform)].cbegin();
-			auto ltBegin = _modules[typeid(Module_Light)].cbegin();
-
-			for (int i = 0; i < size; ++i)
-			{
-				auto tf = dynamic_cast<Module_Transform*>(*std::next(tfBegin, i));
-				auto lt = dynamic_cast<Module_Light*>(*std::next(ltBegin, i));
-				_lights.emplace_back(LightStruct{ tf, lt });
-			}
+			auto tf = std::dynamic_pointer_cast<MTransform>(*std::next(tfBegin, i));
+			auto lt = std::dynamic_pointer_cast<MLight>(*std::next(ltBegin, i));
+			_lights.emplace_back(LightStruct{ tf, lt });
 		}
 	}
 
-	void System_Light::IncrementalUpdateModules(Modules& modules)
+	void SLight::ForceUpdateModules(Modules& modules)
+	{
+		if (modules.TypeModified<MLight, MTransform>())
+		{
+			_modules = modules.
+				GetModules<MLight, MTransform>();
+			UpdateLights();
+		}
+	}
+
+	void SLight::IncrementalUpdateModules(Modules& modules)
 	{
 		RemoveNullModules();
 
-		if (modules.TypeModified<Module_Light, Module_Transform>())
+		if (modules.TypeModified<MLight, MTransform>())
 		{
 			_modules = modules.
-				GetModulesFiltered<Module_Light, Module_Transform>();
-
-			auto size = _modules[typeid(Module_Transform)].size();
-
-			auto tfBegin = _modules[typeid(Module_Transform)].cbegin();
-			auto ltBegin = _modules[typeid(Module_Light)].cbegin();
-
-			for (int i = 0; i < size; ++i)
-			{
-				auto tf = dynamic_cast<Module_Transform*>(*std::next(tfBegin, i));
-				auto lt = dynamic_cast<Module_Light*>(*std::next(ltBegin, i));
-				_lights.emplace_back(LightStruct{ tf, lt });
-			}
+				GetModules<MLight, MTransform>();
+			UpdateLights();
 		}
 	}
 
@@ -101,7 +94,7 @@ namespace Silent
 		}
 	}
 
-	void System_Light::DebugInfo()
+	void SLight::DebugInfo()
 	{
 		static int cSelected = -1;
 		static std::string cName;
@@ -121,7 +114,10 @@ namespace Silent
 
 		if(cData != nullptr)
 		{
-			ImGui::DragFloat3("Translate", &cData->_tf->_translate[0], 0.1f);
+			if (ImGui::DragFloat3("Translate", &cData->_tf->_translate[0], 0.1f))
+			{
+				cData->_tf->updateMatrix = true;
+			}
 			ImGui::DragFloat3("Rotate", &cData->_tf->_rotate[0], 0.1f);
 			ImGui::DragFloat3("Scale", &cData->_tf->_scale[0], 0.1f);
 		}

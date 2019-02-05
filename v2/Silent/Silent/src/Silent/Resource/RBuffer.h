@@ -7,7 +7,7 @@
 
 namespace Silent
 {
-	class SILENT_API Resource_Buffer : public Resource
+	class SILENT_API RBuffer : public Resource
 	{
 	protected:
 		Renderer * _renderer;
@@ -22,8 +22,8 @@ namespace Silent
 		void BindDepthbuffer();
 
 	public:
-		Resource_Buffer(std::string name = "");
-		Resource_Buffer(std::string name, Renderer * renderer,
+		RBuffer(std::string name = "");
+		RBuffer(std::string name, Renderer * renderer,
 						bool useFramebuffer = true,  bool useColorbuffer = true, 
 						bool useDepthbuffer = true);
 

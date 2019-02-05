@@ -41,15 +41,7 @@ namespace Silent
 	public:
 		Module() = default;
 		virtual ~Module() = default;
-// 		Module(const Module &) = delete;
-// 		Module(Module &&) = default;
-// 		Module& operator=(const Module&) = delete;
-// 		Module& operator=(Module&&) = default;
 
-		//constexpr bool operator<(const Module& other) const
-		//{
-		//	return (_entityID < other._entityID);
-		//}
 		bool operator==(const Module& other) const
 		{
 			return _entity == other._entity;
@@ -62,9 +54,8 @@ namespace Silent
 
 	// So this is combined with the common module cos it better to just have one
 	// module that does both rather than two seperate ones
-	class SILENT_API Module_Transform : public Module
+	class SILENT_API MTransform : public Module
 	{
-	public:
 		// This is copied over from the common module stuff
 		// Entity Name
 		std::string _name;
@@ -84,18 +75,21 @@ namespace Silent
 		glm::mat4 _modelMatrix;
 		bool updateMatrix;
 
-		Module_Transform(std::string name = "", 
+	public:
+		MTransform(std::string name = "", 
 						 std::shared_ptr<Entity> parent = nullptr,
 						 glm::vec3 translation = glm::vec3(), 
 						 glm::vec3 rotation = glm::vec3(),
 						 glm::vec3 scale = glm::vec3(1)) :
 			_name(name), _parent(parent), 
 			_translate(translation), _rotate(rotation), _scale(scale) {}
-		virtual ~Module_Transform() = default;
+		virtual ~MTransform() = default;
+
+		friend class ITransform;
 	};
 
 	// Camera module
-	class SILENT_API Module_Camera : public Module
+	class SILENT_API MCamera : public Module
 	{
 	public:
 		float fov = 45.f;
@@ -115,47 +109,47 @@ namespace Silent
 		// TODO: probably put this in a better place
 		bool currentCamera = false;
 
-		Module_Camera() = default;
-		virtual ~Module_Camera() = default;
+		MCamera() = default;
+		virtual ~MCamera() = default;
 	};
 
 	// Mesh Module
 	//class SILENT_API Resource;
-	class SILENT_API Resource_Mesh;
-	class SILENT_API Resource_Material;
-	class SILENT_API Module_Model : public Module
+	class SILENT_API RMesh;
+	class SILENT_API RMaterial;
+	class SILENT_API MModel : public Module
 	{
 	public:
-		std::shared_ptr<Resource_Mesh> mesh;
-		std::shared_ptr<Resource_Material> material;
+		std::shared_ptr<RMesh> mesh;
+		std::shared_ptr<RMaterial> material;
 
-		Module_Model() = default;
-		virtual ~Module_Model() = default;
+		MModel() = default;
+		virtual ~MModel() = default;
 	};
 	
 	// Render Module
-	class SILENT_API Resource_Buffer;
-	class SILENT_API Module_Render : public Module
+	class SILENT_API RBuffer;
+	class SILENT_API MRender : public Module
 	{
 	protected:
 		// render settings?
 	public:
 		bool render = true;
-		std::shared_ptr<Resource_Buffer> buffer;
-		Module_Render() = default;
-		virtual ~Module_Render() = default;
+		std::shared_ptr<RBuffer> buffer;
+		MRender() = default;
+		virtual ~MRender() = default;
 	};
 
 	// This class accepts input from somewhere and 
 	// translates it into something
 	// That is the plan
-	class SILENT_API Module_Input : public Module
+	class SILENT_API MInput : public Module
 	{
 	protected:
 
 	public:
-		Module_Input() = default;
-		virtual ~Module_Input() = default;
+		MInput() = default;
+		virtual ~MInput() = default;
 	};
 
 	enum LightType
@@ -169,7 +163,7 @@ namespace Silent
 	// - Point Light
 	// - Spot Light
 	// - Directional Light
-	class SILENT_API Module_Light : public Module
+	class SILENT_API MLight : public Module
 	{
 	protected:
 	public:
@@ -178,8 +172,8 @@ namespace Silent
 		float size;
 		float falloffPower;
 
-		Module_Light() = default;
-		virtual ~Module_Light() = default;
+		MLight() = default;
+		virtual ~MLight() = default;
 	};
 }
 

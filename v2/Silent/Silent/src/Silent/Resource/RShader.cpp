@@ -1,13 +1,13 @@
-#include "Resource_Shader.h"
+#include "RShader.h"
 
 #include <glm/matrix.hpp>
 
 namespace Silent
 {
-	Resource_Shader::Resource_Shader(std::string name)
+	RShader::RShader(std::string name)
 		: Resource(), _shaderID(0u) {}
 
-	Resource_Shader::Resource_Shader(std::string name, Renderer * renderer,
+	RShader::RShader(std::string name, Renderer * renderer,
 									 bool useVert, bool useFrag,
 									 bool useGeom, bool useTess,
 									 bool useComp) : Resource()
@@ -21,28 +21,28 @@ namespace Silent
 		_renderer->GetUniforms(_shaderID);
 	}
 
-	void Resource_Shader::SetActive()
+	void RShader::SetActive()
 	{
 		_renderer->SetActiveProgram(_shaderID);
 	}
 
-	void Resource_Shader::SetUniform(const std::string& name, 
+	void RShader::SetUniform(const std::string& name, 
 									 const std::any& val)
 	{
 		_renderer->SetUniform(_shaderID, name, val);
 	}
 
-	Silent::ShaderID Resource_Shader::GetShaderID() const
+	Silent::ShaderID RShader::GetShaderID() const
 	{
 		return _shaderID;
 	}
 
-	void Resource_Shader::Cleanup()
+	void RShader::Cleanup()
 	{
 
 	}
 
-	Silent::Renderer * Resource_Shader::GetRenderer() const
+	Silent::Renderer * RShader::GetRenderer() const
 	{ 
 		return _renderer; 
 	}

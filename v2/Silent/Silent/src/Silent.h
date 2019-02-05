@@ -11,11 +11,11 @@
 #include "Silent/Application.h"
 
 #include "Silent/Resource/Resources.h"
-#include "Silent/Resource/Resource_Shader.h"
-#include "Silent/Resource/Resource_Mesh.h"
-#include "Silent/Resource/Resource_Texture.h"
-#include "Silent/Resource/Resource_Material.h"
-#include "Silent/Resource/Resource_Buffer.h"
+#include "Silent/Resource/RShader.h"
+#include "Silent/Resource/RMesh.h"
+#include "Silent/Resource/RTexture.h"
+#include "Silent/Resource/RMaterial.h"
+#include "Silent/Resource/RBuffer.h"
 
 /**
  * The Entity - Module - System Layering is as so (top to bottom):
@@ -29,14 +29,16 @@
 #include "Silent/Entity/Entities.h"
 #include "Silent/Module/Modules.h"
 //#include "Silent/Module/Modules.cpp"
+#include "Silent/Interface/Interface.h"
+//#include "Silent/Interface/Interface.cpp"
 
 #include "Silent/System/Systems.h"
-#include "Silent/System/System_Setting.h"
-#include "Silent/System/System_Input.h"
-#include "Silent/System/System_Camera.h"
-#include "Silent/System/System_Light.h"
-#include "Silent/System/System_Debug.h"
-#include "Silent/System/System_Render.h"
+#include "Silent/System/SSetting.h"
+#include "Silent/System/SInput.h"
+#include "Silent/System/SCamera.h"
+#include "Silent/System/SLight.h"
+#include "Silent/System/SDebug.h"
+#include "Silent/System/SRender.h"
 
 
 //-----------Entry Point-----------

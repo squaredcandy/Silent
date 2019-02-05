@@ -1,9 +1,9 @@
-#include "System_Camera.h"
+#include "SCamera.h"
 #include <SDL/SDL.h>
 
 namespace Silent
 {
-	void System_Camera::Execute()
+	void SCamera::Execute()
 	{
 		// Should have a better check for if we have a current camera or not
 		if (!_cam._camera || !_cam._camtf) return;
@@ -15,30 +15,30 @@ namespace Silent
 		UpdateCameraVectors();
 	}
 
-	void System_Camera::Cleanup()
+	void SCamera::Cleanup()
 	{
 		
 	}
 
-	glm::vec3 System_Camera::GetFaceCameraVector()
+	glm::vec3 SCamera::GetFaceCameraVector()
 	{
 		return glm::vec3(0, _cam.Rotation().x + 90.f, 0);
 	}
 
-	glm::mat4 System_Camera::GetProjectionMatrix(ImVec2& size)
+	glm::mat4 SCamera::GetProjectionMatrix(ImVec2& size)
 	{
 		return glm::perspective(_cam._camera->fov, size.x / size.y,
 							_cam._camera->nearPlane, _cam._camera->farPlane);
 	}
 
-	glm::mat4 System_Camera::GetViewMatrix()
+	glm::mat4 SCamera::GetViewMatrix()
 	{
 		return glm::lookAt(_cam.Translation(),
 						   _cam.Translation() + _cam.ForwardVector(),
 						   _cam.UpVector());
 	}
 
-	void System_Camera::CameraTranslation(float dt)
+	void SCamera::CameraTranslation(float dt)
 	{
 		float moveSpeed = _cam._camera->translateSpeed * dt;
 		if (ImGui::IsKeyDown(SDL_SCANCODE_W))
@@ -55,7 +55,7 @@ namespace Silent
 			_cam.Translation() -= _cam.UpVector() * moveSpeed;
 	}
 
-	void System_Camera::CameraRotation(float dt)
+	void SCamera::CameraRotation(float dt)
 	{
 		if (!ImGui::IsMouseDown(1)) return;
 		ImVec2 mouseDelta = ImGui::GetIO().MouseDelta;
@@ -70,7 +70,7 @@ namespace Silent
 			(mouseDelta.y * rotSpeed), -MaxLookHeight, MaxLookHeight);
 	}
 
-	void System_Camera::UpdateCameraVectors()
+	void SCamera::UpdateCameraVectors()
 	{
 		auto yawRad = glm::radians(_cam.Rotation()[0]);
 		auto pitchRad = glm::radians(_cam.Rotation()[1]);
@@ -90,68 +90,53 @@ namespace Silent
 			glm::cross(_cam.RightVector(), _cam.ForwardVector()));
 	}
 
-	void System_Camera::ForceUpdateModules(Modules& modules)
+	void SCamera::UpdateCamera()
 	{
-		// I need to move this to the transform module
-		if (modules.TypeModified<Module_Camera, Module_Transform>())
+		auto camMod = _modules[typeid(MCamera)].cbegin();
+		auto tfMod = _modules[typeid(MTransform)].cbegin();
+
+		auto camModEnd = _modules[typeid(MCamera)].cend();
+		auto tfModEnd = _modules[typeid(MTransform)].cend();
+
+		for (; camMod != camModEnd && tfMod != tfModEnd; ++camMod, ++tfMod)
 		{
-			_modules = modules.
-				GetModulesUnfiltered<Module_Camera, Module_Transform>();
-
-			auto camMod = _modules[typeid(Module_Camera)].cbegin();
-			auto tfMod = _modules[typeid(Module_Transform)].cbegin();
-
-			auto camModEnd = _modules[typeid(Module_Camera)].cend();
-			auto tfModEnd = _modules[typeid(Module_Transform)].cend();
-
-			for (; camMod != camModEnd && tfMod != tfModEnd; ++camMod, ++tfMod)
+			auto cam = std::dynamic_pointer_cast<MCamera>(*camMod);
+			if (cam->currentCamera)
 			{
-				auto cam = dynamic_cast<Module_Camera*>(*camMod);
-				if (cam->currentCamera)
-				{
-					auto tf = dynamic_cast<Module_Transform*>(*tfMod);
-					_cam = CameraStructure(cam, tf);
-					return;
-				}
+				auto tf = std::dynamic_pointer_cast<MTransform>(*tfMod);
+				_cam = CameraStructure(cam, tf);
+				return;
 			}
 		}
 	}
+	
 
-	void System_Camera::IncrementalUpdateModules(Modules& modules)
+	void SCamera::ForceUpdateModules(Modules& modules)
+	{
+		// I need to move this to the transform module
+		if (modules.TypeModified<MCamera, MTransform>())
+		{
+			_modules = modules.
+				GetModules<MCamera, MTransform>();
+			_modules = modules.GetModules<MCamera>();
+			UpdateCamera();
+		}
+	}
+
+	void SCamera::IncrementalUpdateModules(Modules& modules)
 	{
 		RemoveNullModules();
 
 		// I need to move this to the transform module
-		if (modules.TypeModified<Module_Camera, Module_Transform>())
+		if (modules.TypeModified<MCamera, MTransform>())
 		{
 			_modules = modules.
-				GetModulesFiltered<Module_Camera, Module_Transform>();
-			for (auto mod : _modules[typeid(Module_Camera)])
-			{
-				auto cam = dynamic_cast<Module_Camera*>(mod);
-
-				auto camMod = _modules[typeid(Module_Camera)].cbegin();
-				auto tfMod = _modules[typeid(Module_Transform)].cbegin();
-
-				auto camModEnd = _modules[typeid(Module_Camera)].cend();
-				auto tfModEnd = _modules[typeid(Module_Transform)].cend();
-
-				for (; camMod != camModEnd && tfMod != tfModEnd; 
-					 ++camMod, ++tfMod)
-				{
-					auto cam = dynamic_cast<Module_Camera*>(*camMod);
-					if (cam->currentCamera)
-					{
-						auto tf = dynamic_cast<Module_Transform*>(*tfMod);
-						_cam = CameraStructure(cam, tf);
-						return;
-					}
-				}
-			}
+				GetModules<MCamera, MTransform>();
+			UpdateCamera();
 		}
 	}
 
-	void System_Camera::DebugInfo()
+	void SCamera::DebugInfo()
 	{
 	}
 

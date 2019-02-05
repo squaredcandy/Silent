@@ -18,7 +18,7 @@ namespace Silent
 		glm::vec3 scale)
 	{
 		std::shared_ptr<Entity> e = std::make_shared<Entity>();
-		Singleton<Modules>::Instance().AddModule<Module_Transform>(e, 
+		Singleton<Modules>::Instance().AddModule<MTransform>(e, 
 			name, parent, translation, rotation, scale);
 		entities.emplace_back(e);
 		return entities.back();

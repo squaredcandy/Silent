@@ -28,12 +28,10 @@ std::pair<T, bool> GetSetElement(std::set<T>& searchSet, int i)
 namespace Silent
 {
 	// Various Module Ptr
-	using UModule = std::unique_ptr<Module>;
 	using SModule = std::shared_ptr<Module>;
-	using AModule = Module *;
 
 	// Selected Module Ptr
-	using ModulePtr = UModule;
+	using ModulePtr = SModule;
 
 	struct ModulePtrComparitor
 	{
@@ -43,31 +41,24 @@ namespace Silent
 		}
 	};
 
-	struct AModuleComparitor
-	{
-		bool operator()(const AModule& l, const AModule& r) const
-		{
-			return l->_entity->_entityID < r->_entity->_entityID;
-		}
-	};
-
 	// Container of module Ptr's
 	using ConModulePtr = std::set<ModulePtr, ModulePtrComparitor>;
 
-	// Container of Module * - Used for returns
-	using ConAModule = std::set<AModule, AModuleComparitor>;
-	
 	// Mapping the type index to a container module ptr
 	using MapTypeToConModulePtr = std::map<std::type_index, ConModulePtr>;
 
-	// Mapping the type index to a container module ptr
-	using MapTypeToConAModule = std::map<std::type_index, ConAModule>;
+	//struct ModuleTypeComp
+	//{
+	//	bool operator()(const std::type_index& a, const ModuleReference& b)
+	//	{
+	//		return a < b.t;
+	//	}
+	//};
 
 	// This is meant to be used with the singleton pattern
 	class SILENT_API Modules
 	{
 	private:
-		//const int MODULES_SIZE = 100;
 		// y we have do this idk
 		ModulePtr b;
 		MapTypeToConModulePtr modules;
@@ -151,13 +142,22 @@ namespace Silent
 			m->_entity = entity;
 			ModulePtr uPtr{ m };
 			auto success = modules[typeid(T)].insert(std::move(uPtr));
-			typesModified[typeid(T)] = true;
-			typesCounter[typeid(T)].first++;
+			if (success.second)
+			{
+				typesModified[typeid(T)] = true;
+				typesCounter[typeid(T)].first++;
 
-			// Add a reference to it in the entity for quick query and retrival
-			entity->modules.emplace(typeid(T));
-
-			return dynamic_cast<T*>(success.first->get());
+				// Add a reference to it in the entity for quick query and retrival
+				auto pos = entity->modTypes.emplace(typeid(T));
+				if (pos.second)
+				{
+					auto dist = std::distance(entity->modTypes.begin(), pos.first);
+					entity->mods.emplace(std::next(entity->mods.begin(), dist), 
+										 success.first->get());
+				}
+				return dynamic_cast<T*>(success.first->get());
+			}
+			return nullptr;
 		}
 
 		template<typename T>
@@ -211,26 +211,26 @@ namespace Silent
 		}
 
 		template<typename T>
-		inline MapTypeToConAModule GetModulesAddedThisFrame(bool onlyActive = true)
+		inline MapTypeToConModulePtr GetModulesAddedThisFrame(bool onlyActive = true)
 		{
-			MapTypeToConAModule map;
+			MapTypeToConModulePtr map;
 
 			auto sizeDiff = modules[typeid(T)].size() - typesCounter[typeid(T)].first;
 
 			for (auto it = std::next(modules[typeid(T)].begin(), sizeDiff);
 				 it != modules[typeid(T)].end(); ++it)
 			{
-				map[typeid(T)].emplace((*it).get());
+				map[typeid(T)].emplace((*it));
 			}
 
 			return map;
 		}
 
 		template<typename T, typename S, typename... Arg>
-		inline MapTypeToConAModule GetModulesAddedThisFrame(bool onlyActive = true)
+		inline MapTypeToConModulePtr GetModulesAddedThisFrame(bool onlyActive = true)
 		{
 			static std::set<std::type_index> types{ typeid(T), typeid(S), typeid(Arg)... };
-			MapTypeToConAModule map;
+			MapTypeToConModulePtr map;
 
 			for (const auto& type : types)
 			{
@@ -239,7 +239,7 @@ namespace Silent
 				for (auto it = std::next(modules[type].begin(), sizeDiff);
 					 it != modules[type].end(); ++it)
 				{
-					map[type].emplace((*it).get());
+					map[type].emplace((*it));
 				}
 			}
 
@@ -247,15 +247,22 @@ namespace Silent
 		}
 
 		template<typename T>
-		inline MapTypeToConAModule GetModulesFiltered(bool onlyActive = true)
+		inline MapTypeToConModulePtr GetModules(bool useFilter = true,
+												bool onlyActive = true)
 		{
-			MapTypeToConAModule map;
-			MapTypeToConAModule filter = GetModulesAddedThisFrame<T>(onlyActive);
+			MapTypeToConModulePtr map;
+			MapTypeToConModulePtr filter;
+			MapTypeToConModulePtr * modPtr = &modules;
+			if (useFilter)
+			{
+				filter = GetModulesAddedThisFrame<T>(onlyActive);
+				modPtr = &filter;
+			}
 
 			// find the module type
-			if (!filter.count(typeid(T))) return map;
+			if (!modPtr->count(typeid(T))) return map;
 
-			for (auto& m : filter[typeid(T)])
+			for (auto& m : (*modPtr)[typeid(T)])
 			{
 				if (onlyActive && !m->_entity->_active) continue;
 				map[typeid(T)].emplace(m);
@@ -264,42 +271,31 @@ namespace Silent
 			return map;
 		}
 
-		// Template version of Get Modules
-		// Get all the modules of one type
-		template<typename T>
-		MapTypeToConAModule GetModulesUnfiltered(bool onlyActive = true)
+		template<typename T, typename S, typename... Arg>
+		MapTypeToConModulePtr GetModules(bool useFilter = true, 
+										 bool onlyActive = true)
 		{
-			MapTypeToConAModule map;
+			static std::set<std::type_index> types{ typeid(T), 
+				typeid(S), typeid(Arg)... };
 
-			// find the module type
-			if (!modules.count(typeid(T))) return map;
-
-			for (auto& m : modules[typeid(T)])
+			MapTypeToConModulePtr map;
+			MapTypeToConModulePtr filter;
+			MapTypeToConModulePtr * modPtr = &modules;
+			if (useFilter)
 			{
-				if (onlyActive && !m->_entity->_active) continue;
-				map[typeid(T)].emplace(m.get());
+				filter = GetModulesAddedThisFrame<T, S, Arg...>(onlyActive);
+				modPtr = &filter;
 			}
 
-			return map;
-		}
-
-		template<typename T, typename S, typename... Arg>
-		inline MapTypeToConAModule GetModulesFiltered(bool onlyActive = true)
-		{
-			MapTypeToConAModule map;
-			MapTypeToConAModule filter = GetModulesAddedThisFrame<T, S, Arg...>(onlyActive);
-
-			static std::set<std::type_index> types{ typeid(T), typeid(S), typeid(Arg)... };
-			for (const auto& type : types) if (!filter.count(type)) return map;
+			for (const auto& type : types) if (!modPtr->count(type)) return map;
 
 			const auto& entities = Singleton<Entities>::Instance().GetEntities();
-			std::set<EntityID> ids;
 
+			std::set<EntityID> ids;
 			// Get all valid ID's
 			for (const auto& entity : entities)
 			{
-				const auto& mods = entity->modules;
-				//std::sort(mods.begin(), mods.end());
+				const auto& mods = entity->modTypes;
 				if (std::includes(mods.begin(), mods.end(),
 								  types.begin(), types.end()))
 				{
@@ -310,7 +306,7 @@ namespace Silent
 			// Get all the modules 
 			for (const auto& type : types)
 			{
-				for (const auto& mod : filter[type])
+				for (const auto& mod : (*modPtr)[type])
 				{
 					if (std::find(ids.begin(), ids.end(),
 								  mod->_entity->_entityID) != ids.end())
@@ -323,45 +319,104 @@ namespace Silent
 			return map;
 		}
 
-		template<typename T, typename S, typename... Arg>
-		MapTypeToConAModule GetModulesUnfiltered(bool onlyActive = true)
-		{
-			MapTypeToConAModule map;
-			static std::set<std::type_index> types { typeid(T), typeid(S), typeid(Arg)... };
-			for (const auto& type : types)
-			{
-				if (modules.count(type) == 0) return map;
-			}
-			
-			const auto& entities = Singleton<Entities>::Instance().GetEntities();
-			std::set<EntityID> ids;
-
-			// Get all valid ID's
-			for (const auto& entity : entities)
-			{
-				const auto& mods = entity->modules;
-				//std::sort(mods.begin(), mods.end());
-				if (std::includes(types.begin(), types.end(),
-								  mods.begin(), mods.end()))
-				{
-					ids.emplace(entity->_entityID);
-				}
-			}
-
-			// Get all the modules 
-			for (const auto& type : types)
-			{
-				for (const auto& mod : modules[type])
-				{
-					if (std::find(ids.begin(), ids.end(),
-								  mod->_entity->_entityID) != ids.end())
-					{
-						map[type].emplace(mod.get());
-					}
-				}
-			}
-
-			return map;
-		}
+// 		template<typename T, typename S, typename... Arg>
+// 		inline MapTypeToConModulePtr GetModulesFiltered(bool onlyActive = true)
+// 		{
+// 			MapTypeToConModulePtr map;
+// 			MapTypeToConModulePtr filter = GetModulesAddedThisFrame<T, S, Arg...>(onlyActive);
+// 
+// 			static std::set<ModuleReference> types{ ModuleReference(typeid(T)),
+// 				ModuleReference(typeid(S)), ModuleReference(typeid(Arg))... };
+// 			for (const auto& type : types) if (!filter.count(type.t)) return map;
+// 
+// 			const auto& entities = Singleton<Entities>::Instance().GetEntities();
+// 			std::set<EntityID> ids;
+// 
+// 			// Get all valid ID's
+// // 			for (const auto& entity : entities)
+// // 			{
+// // 				const auto& mods = entity->modules;
+// // 				//std::sort(mods.begin(), mods.end());
+// // 				if (std::includes(mods.begin(), mods.end(),
+// // 								  types.begin(), types.end()))
+// // 				{
+// // 					//ids.emplace(entity->_entityID);
+// // 					map[mods.t].emplace(mods.m);
+// // 				}
+// // 			}
+// 
+// 			std::set<ModuleReference> intersection;
+// 			for (const auto& entity : entities)
+// 			{
+// 				const auto& mods = entity->modules;
+// 				std::set_intersection(mods.begin(), mods.end(), 
+// 									  types.begin(), types.end(), 
+// 									  std::inserter(intersection, 
+// 													intersection.begin()));
+// 				if (intersection.size() == types.size())
+// 				{
+// 					for (auto& i : intersection)
+// 					{
+// 						map[i.t].emplace(i.m);
+// 					}
+// 				}
+// 			}
+// 
+// 			// Get all the modules 
+// // 			for (const auto& type : types)
+// // 			{
+// // 				for (const auto& mod : filter[type.t])
+// // 				{
+// // 					if (std::find(ids.begin(), ids.end(),
+// // 								  mod->_entity->_entityID) != ids.end())
+// // 					{
+// // 						map[type.t].emplace(mod);
+// // 					}
+// // 				}
+// // 			}
+// 
+// 			return map;
+// 		}
+// 
+// 		template<typename T, typename S, typename... Arg>
+// 		MapTypeToConModulePtr GetModulesUnfiltered(bool onlyActive = true)
+// 		{
+// 			MapTypeToConModulePtr map;
+// 			static std::set<ModuleReference> types { ModuleReference(typeid(T)), 
+// 				ModuleReference(typeid(S)), ModuleReference(typeid(Arg))... };
+// 			for (const auto& type : types)
+// 			{
+// 				if (modules.count(type.t) == 0) return map;
+// 			}
+// 			
+// 			const auto& entities = Singleton<Entities>::Instance().GetEntities();
+// 			std::set<EntityID> ids;
+// 
+// 			// Get all valid ID's
+// 			for (const auto& entity : entities)
+// 			{
+// 				const auto& mods = entity->modules;
+// 				if (std::includes(mods.begin(), mods.end(),
+// 								  types.begin(), types.end()))
+// 				{
+// 					ids.emplace(entity->_entityID);
+// 				}
+// 			}
+// 
+// 			// Get all the modules 
+// 			for (const auto& type : types)
+// 			{
+// 				for (const auto& mod : modules[type.t])
+// 				{
+// 					if (std::find(ids.begin(), ids.end(),
+// 								  mod->_entity->_entityID) != ids.end())
+// 					{
+// 						map[type.t].emplace(mod.get());
+// 					}
+// 				}
+// 			}
+// 
+// 			return map;
+// 		}
 	};
 }

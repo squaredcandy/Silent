@@ -7,15 +7,15 @@
 
 namespace Silent
 {
-	class SILENT_API Resource_Mesh : public Resource
+	class SILENT_API RMesh : public Resource
 	{
 	protected:
 		MeshID _meshID;
 		Renderer * _renderer;
 	public:
-		Resource_Mesh(std::string name = "");
-		Resource_Mesh(std::string name, Renderer * renderer);
-		virtual ~Resource_Mesh() = default;
+		RMesh(std::string name = "");
+		RMesh(std::string name, Renderer * renderer);
+		virtual ~RMesh() = default;
 
 		void Cleanup() override;
 		

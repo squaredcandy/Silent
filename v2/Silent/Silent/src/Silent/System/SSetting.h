@@ -8,17 +8,16 @@ namespace Silent
 	// The real question is if we want to use a map of string to anything
 	// that way we can sort of do an auto imgui thing but that will mean 
 	// its runtime only or we can just do hard values
-	class SILENT_API System_Setting : public System
+	class SILENT_API SSetting : public System
 	{
 	public:
-		System_Setting(SystemPriority priority = 20) 
+		SSetting(SystemPriority priority = 20) 
 			: System("Settings", priority) {}
-		virtual ~System_Setting() = default;
+		virtual ~SSetting() = default;
 
 		virtual void ForceUpdateModules(Modules& modules) override;
 		virtual void IncrementalUpdateModules(Modules& modules) override;
 		virtual void Execute() override;
 		virtual void Cleanup() override;
 	};
-
 }

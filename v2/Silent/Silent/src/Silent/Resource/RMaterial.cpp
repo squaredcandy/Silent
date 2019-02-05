@@ -1,4 +1,4 @@
-#include "Resource_Material.h"
+#include "RMaterial.h"
 
 namespace Silent
 {
@@ -8,13 +8,13 @@ namespace Silent
 		return newID++;
 	}
 
-	Resource_Material::Resource_Material(std::string name) 
+	RMaterial::RMaterial(std::string name) 
 		: _materialID(GenerateMaterialID())
 	{
 
 	}
 
-	void Resource_Material::SetShader(std::shared_ptr<Resource_Shader> shader)
+	void RMaterial::SetShader(std::shared_ptr<RShader> shader)
 	{
 		_shader = shader;
 		// We clear any uniforms cos it may not match up with the new shader
@@ -22,24 +22,24 @@ namespace Silent
 		uniformParams.clear();
 	}
 
-	void Resource_Material::AddTexture(int idx, 
-									   std::shared_ptr<Resource_Texture> texture)
+	void RMaterial::AddTexture(int idx, 
+									   std::shared_ptr<RTexture> texture)
 	{
 		_textures[idx] = texture;
 	}
 
-	void Resource_Material::AddParameter(const std::string& name, 
+	void RMaterial::AddParameter(const std::string& name, 
 										 const std::any& val)
 	{
 		uniformParams[name] = val;
 	}
 
-	MaterialID Resource_Material::GetMaterialID() const
+	MaterialID RMaterial::GetMaterialID() const
 	{
 		return _materialID;
 	}
 
-	void Resource_Material::Cleanup()
+	void RMaterial::Cleanup()
 	{
 		//_shader.reset();
 		_textures.clear();

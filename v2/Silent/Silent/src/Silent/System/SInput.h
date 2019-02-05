@@ -4,13 +4,13 @@
 
 namespace Silent
 {
-	class SILENT_API System_Input : public System
+	class SILENT_API SInput : public System
 	{
 	protected:
 		// Something to do with the input stuff 
 	public:
-		System_Input(SystemPriority priority = 0) : System("Input", priority){}
-		virtual ~System_Input() = default;
+		SInput(SystemPriority priority = 0) : System("Input", priority){}
+		virtual ~SInput() = default;
 
 		virtual void ForceUpdateModules(Modules& modules) override;
 		virtual void IncrementalUpdateModules(Modules& modules) override;

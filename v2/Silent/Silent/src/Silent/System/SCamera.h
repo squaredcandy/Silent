@@ -9,15 +9,15 @@ namespace Silent
 {
 	struct CameraStructure
 	{
-		Module_Camera * _camera;
-		Module_Transform * _camtf;
+		std::shared_ptr<MCamera> _camera;
+		std::shared_ptr<MTransform> _camtf;
 
 		CameraStructure() : _camera(nullptr), _camtf(nullptr) {}
-		CameraStructure(Module_Camera * camera, Module_Transform * tf)
-		{
-			_camera = camera;
-			_camtf = tf;
-		}
+		//CameraStructure(MCamera * camera, MTransform * tf)
+		//	: _camera(camera), _camtf(tf) {}
+		CameraStructure(std::shared_ptr<MCamera> camera, 
+						std::shared_ptr<MTransform> tf)
+			: _camera(camera), _camtf(tf) {}
 		~CameraStructure() = default;
 
 		glm::vec3& Translation() { return _camtf->_translate; }
@@ -29,14 +29,16 @@ namespace Silent
 		glm::vec3& UpVector() { return _camtf->_upVector; }
 	};
 
-	class SILENT_API System_Camera : public System
+	class SILENT_API SCamera : public System
 	{
 	protected:
 		CameraStructure _cam;
+
+		void UpdateCamera();
 	public:
 
-		System_Camera(SystemPriority priority = 2) : System("Camera", priority) {}
-		virtual ~System_Camera() = default;
+		SCamera(SystemPriority priority = 2) : System("Camera", priority) {}
+		virtual ~SCamera() = default;
 
 		virtual void Execute() override;
 		virtual void Cleanup() override;
