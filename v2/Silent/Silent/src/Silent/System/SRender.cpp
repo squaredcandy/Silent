@@ -28,10 +28,9 @@ namespace Silent
 			auto size = model.model.size();
 			for (int i = 0; i < size; ++i)
 			{
-				if (model.tf[i]->updateMatrix)
+				if (ITransform::MatrixUpdated(model.tf[i]))
 				{
-					model.model[i] = 
-						ITransform::UpdateModelMatrix(model.tf[i].get());
+					model.model[i] = ITransform::ModelMatrix(model.tf[i]);
 				}
 			}
 		}
@@ -49,8 +48,9 @@ namespace Silent
 			auto pos = ImGui::GetWindowPos();
 			auto size = ImGui::GetWindowSize();
 
-			auto projection = _cameraSystem->GetProjectionMatrix(size);
-			auto view = _cameraSystem->GetViewMatrix();
+			auto & cam = _cameraSystem->GetCameras();
+			auto projection = ICamera::ProjectionMatrix(cam._camera, size);
+			auto view = ITransform::ViewMatrix(cam._camtf);
 
 			BufferID currentBufferID = 0u;
 			ShaderID currentShaderID = 0u;
@@ -87,10 +87,11 @@ namespace Silent
 				}
 
 				shader->SetUniform("viewPos", 
-						_cameraSystem->GetCameras().Translation());
+						ITransform::Translation(cam._camtf));
 				// TODO: Slow - Redo this sometime
 				std::vector<LightStruct> light = _lightSystem->GetLights(1);
-				shader->SetUniform("lightPos", light[0].Translation());
+				
+				shader->SetUniform("lightPos", ITransform::Translation(light[0]._tf));
 
 				// Assign all the textures
 				for (const auto&[key, val] : material->_textures)
@@ -149,8 +150,7 @@ namespace Silent
 			ImGui::Text("No. Rendered Objects %d", totalObjectsRendered);
 
 			ImGui::SliderFloat("Camera Speed", 
-				&_cameraSystem->GetCameras()._camera->translateSpeed, 
-							   0.1f, 10.f);
+							   &_cameraSystem->translationSpeed, 0.1f, 10.f);
 
 		}
 		ImGui::End();
@@ -180,8 +180,8 @@ namespace Silent
 
 				auto& matrixStruct = _models[{ rdr->buffer, mdl->mesh, mdl->material }];
 				matrixStruct.tf.emplace_back(tf);
-				tf->_modelMatrix = ITransform::UpdateModelMatrix(tf.get());
-				matrixStruct.model.emplace_back(tf->_modelMatrix);
+				//tf->_modelMatrix = ITransform::UpdateModelMatrix(tf.get());
+				matrixStruct.model.emplace_back(ITransform::ModelMatrix(tf));
 			}
 		}
 	}
@@ -199,7 +199,7 @@ namespace Silent
 
 	void SRender::IncrementalUpdateModules(Modules& modules)
 	{
-		RemoveNullModules();
+		//RemoveNullModules();
 
 		// Get the models
 		if (modules.TypeModified<MTransform, MModel, MRender>())

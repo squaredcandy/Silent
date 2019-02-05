@@ -73,9 +73,10 @@ namespace Silent
 		glm::vec3 _rightVector;
 
 		glm::mat4 _modelMatrix;
-		bool updateMatrix;
-
+		// Check if we need to update the matrix data in the renderer
+		bool matrixUpdated;
 	public:
+
 		MTransform(std::string name = "", 
 						 std::shared_ptr<Entity> parent = nullptr,
 						 glm::vec3 translation = glm::vec3(), 
@@ -91,18 +92,10 @@ namespace Silent
 	// Camera module
 	class SILENT_API MCamera : public Module
 	{
-	public:
+	private:
 		float fov = 45.f;
 		float nearPlane = 0.05f;
 		float farPlane = 1000000.f;
-
-		// Distance from the camera in 
-		// which we don't update the light
-		float lightDistance = 100.f;
-
-		// Move this to somewhere else
-		float translateSpeed = 5.f;
-		float rotateSpeed = 10.f;
 
 	public:
 		// Is this the current camera?
@@ -111,6 +104,8 @@ namespace Silent
 
 		MCamera() = default;
 		virtual ~MCamera() = default;
+
+		friend class ICamera;
 	};
 
 	// Mesh Module

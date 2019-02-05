@@ -1,6 +1,8 @@
 #include "SCamera.h"
 #include <SDL/SDL.h>
 
+#include "../Interface/Interface.h"
+
 namespace Silent
 {
 	void SCamera::Execute()
@@ -12,7 +14,6 @@ namespace Silent
 
 		CameraTranslation(dt);
 		CameraRotation(dt);
-		UpdateCameraVectors();
 	}
 
 	void SCamera::Cleanup()
@@ -20,39 +21,45 @@ namespace Silent
 		
 	}
 
-	glm::vec3 SCamera::GetFaceCameraVector()
-	{
-		return glm::vec3(0, _cam.Rotation().x + 90.f, 0);
-	}
-
-	glm::mat4 SCamera::GetProjectionMatrix(ImVec2& size)
-	{
-		return glm::perspective(_cam._camera->fov, size.x / size.y,
-							_cam._camera->nearPlane, _cam._camera->farPlane);
-	}
-
-	glm::mat4 SCamera::GetViewMatrix()
-	{
-		return glm::lookAt(_cam.Translation(),
-						   _cam.Translation() + _cam.ForwardVector(),
-						   _cam.UpVector());
-	}
-
 	void SCamera::CameraTranslation(float dt)
 	{
-		float moveSpeed = _cam._camera->translateSpeed * dt;
+		float moveSpeed = translationSpeed * dt;
+		bool translated = false;
+		auto newTranslation = ITransform::Translation(_cam._camtf);
+		auto fd = ITransform::ForwardVector(_cam._camtf) * moveSpeed;
+		auto rt = ITransform::RightVector(_cam._camtf) * moveSpeed;
+		auto up = ITransform::UpVector(_cam._camtf) * moveSpeed;
 		if (ImGui::IsKeyDown(SDL_SCANCODE_W))
-			_cam.Translation() += _cam.ForwardVector() * moveSpeed;
+		{
+			newTranslation += fd;
+			translated = true;
+		}
 		if (ImGui::IsKeyDown(SDL_SCANCODE_S))
-			_cam.Translation() -= _cam.ForwardVector() * moveSpeed;
+		{
+			newTranslation -= fd;
+			translated = true;
+		}
 		if (ImGui::IsKeyDown(SDL_SCANCODE_D))
-			_cam.Translation() += _cam.RightVector() * moveSpeed;
+		{
+			newTranslation += rt;
+			translated = true;
+		}
 		if (ImGui::IsKeyDown(SDL_SCANCODE_A))
-			_cam.Translation() -= _cam.RightVector() * moveSpeed;
+		{
+			newTranslation -= rt;
+			translated = true;
+		}
 		if (ImGui::IsKeyDown(SDL_SCANCODE_Q))
-			_cam.Translation() += _cam.UpVector() * moveSpeed;
+		{
+			newTranslation += up;
+			translated = true;
+		}
 		if (ImGui::IsKeyDown(SDL_SCANCODE_E))
-			_cam.Translation() -= _cam.UpVector() * moveSpeed;
+		{
+			newTranslation -= up;
+			translated = true;
+		}
+		if (translated) ITransform::Translate(_cam._camtf, newTranslation);
 	}
 
 	void SCamera::CameraRotation(float dt)
@@ -63,31 +70,12 @@ namespace Silent
 		mouseDelta.y *= 0.01f;
 
 		const float MaxLookHeight = 89.9f;
-		
-		float rotSpeed = _cam._camera->rotateSpeed;
-		_cam.Rotation()[0] += mouseDelta.x * rotSpeed;
-		_cam.Rotation()[1] = glm::clamp(_cam.Rotation()[1] -
-			(mouseDelta.y * rotSpeed), -MaxLookHeight, MaxLookHeight);
-	}
+		auto rot = ITransform::Rotation(_cam._camtf);
 
-	void SCamera::UpdateCameraVectors()
-	{
-		auto yawRad = glm::radians(_cam.Rotation()[0]);
-		auto pitchRad = glm::radians(_cam.Rotation()[1]);
-		auto cYawRad = cosf(yawRad);
-		auto cPitchRad = cosf(pitchRad);
-		auto sYawRad = sinf(yawRad);
-		auto sPitchRad = sinf(pitchRad);
-
-		const glm::vec3 worldUpVector{ 0.f, 1.f, 0.f };
-
-		auto forward = glm::vec3(cYawRad * cPitchRad, sPitchRad, 
-								 sYawRad * cPitchRad);
-		_cam.ForwardVector() = glm::normalize(forward);
-		_cam.RightVector() = glm::normalize(
-			glm::cross(_cam.ForwardVector(), worldUpVector));
-		_cam.UpVector() = glm::normalize(
-			glm::cross(_cam.RightVector(), _cam.ForwardVector()));
+		rot[0] += mouseDelta.x * rotationSpeed;
+		rot[1] = glm::clamp(rot[1] - (mouseDelta.y * rotationSpeed),
+							-MaxLookHeight, MaxLookHeight);
+		ITransform::Rotate(_cam._camtf, rot);
 	}
 
 	void SCamera::UpdateCamera()
@@ -104,6 +92,7 @@ namespace Silent
 			if (cam->currentCamera)
 			{
 				auto tf = std::dynamic_pointer_cast<MTransform>(*tfMod);
+				ITransform::UpdateRotationVectors(tf);
 				_cam = CameraStructure(cam, tf);
 				return;
 			}

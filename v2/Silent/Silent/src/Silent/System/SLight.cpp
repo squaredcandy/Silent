@@ -1,5 +1,7 @@
 #include "SLight.h"
 
+#include "../Interface/Interface.h"
+
 namespace Silent
 {
 
@@ -15,14 +17,16 @@ namespace Silent
 	void SLight::Execute()
 	{
 		if (_lights.size() == 1) return;
-		if (cameraPos == _cameraSystem->GetCameras().Translation()) return;
-		cameraPos = _cameraSystem->GetCameras().Translation();
+		auto newTranslation = 
+			ITransform::Translation(_cameraSystem->GetCameras()._camtf);
+		if (cameraPos == newTranslation) return;
+		cameraPos = newTranslation;
 
 		// Sort the lights by distance from the camera
 		const auto& checkDistance = [=] (LightStruct& a, LightStruct& b)
 		{
-			auto aDist = glm::distance(cameraPos, a.Translation());
-			auto bDist = glm::distance(cameraPos, b.Translation());
+			auto aDist = glm::distance(cameraPos, ITransform::Translation(a._tf));
+			auto bDist = glm::distance(cameraPos, ITransform::Translation(b._tf));
 			return aDist < bDist;
 		};
 
@@ -106,7 +110,8 @@ namespace Silent
 			for (auto& light : _lights)
 			{
 				DataSelectable<LightStruct>(
-					cSelected, cName, cData, i, light._tf->_name, &light);
+					cSelected, cName, cData, i, 
+					ITransform::Name(light._tf), &light);
 			}
 
 			ImGui::EndCombo();
@@ -114,12 +119,7 @@ namespace Silent
 
 		if(cData != nullptr)
 		{
-			if (ImGui::DragFloat3("Translate", &cData->_tf->_translate[0], 0.1f))
-			{
-				cData->_tf->updateMatrix = true;
-			}
-			ImGui::DragFloat3("Rotate", &cData->_tf->_rotate[0], 0.1f);
-			ImGui::DragFloat3("Scale", &cData->_tf->_scale[0], 0.1f);
+			ITransform::DebugTRS(cData->_tf);
 		}
 
 	}

@@ -42,8 +42,8 @@ protected:
  		auto cam = ents->AddEntity("Camera");
  		auto modCam = mods->AddModule<MCamera>(cam);
  		modCam->currentCamera = true;
-		modCam->nearPlane = 0.01f;
-		modCam->translateSpeed = 1;
+		ICamera::NearPlane(modCam) = 0.01f;
+		sysCam->translationSpeed = 1;
 
 		auto texWhite = ress->LoadResource<RTexture>("slash.png", platform->renderer);
 		auto matWhite = ress->LoadResource<RMaterial>("WhiteMaterial");
@@ -53,8 +53,8 @@ protected:
 		auto light = ents->AddEntity("Light");
 		auto lightModTf = mods->GetModule<MTransform>(light);
 		
-		//auto a = ITransform::GetTranslate(lightModTf);
-		//auto& b = ITransform::GetTranslate(lightModTf);
+		//auto a = ITransform::Translation(lightModTf);
+		//auto& b = ITransform::Translation(lightModTf);
 		//a = { 1, 1, 1 };
 		//b = { 1, 2, 1 };
 
@@ -95,13 +95,10 @@ protected:
 // 			{
 // 				int i = 0;
 // 			}
-// 
-// 			tf2->_translate.x = x;
-// 			tf2->_translate.y = y;
-// 			tf2->_translate.z = z;
+// 			ITransform::Translate(tf2, { x, y, z });
 // 
 // 			const float scaleSize = 0.001f;
-// 			tf2->_scale = { scaleSize, scaleSize, scaleSize };
+// 			ITransform::Scale(tf2,{ scaleSize, scaleSize, scaleSize });
 // 			pos += offset;
 // 
 // 			auto model2 = mods->AddModule<MModel>(box2);
@@ -124,7 +121,6 @@ protected:
 		static int i = 0;
 		static Uint32 timer = 0;
 		timer += dt;
-		return;
 		if (timer > 0 && ents->GetEntities().size() <= 1000)
 		{
 			timer = 0;
@@ -140,12 +136,10 @@ protected:
 			if (y < cutoff && y > -cutoff) y = 0;
 			if (z < cutoff && z > -cutoff) z = 0;
 
-			tf2->_translate.x = x;
-			tf2->_translate.y = y;
-			tf2->_translate.z = z;
+ 			ITransform::Translate(tf2, { x, y, z });
 
 			const float scaleSize = 0.001f;
-			tf2->_scale = { scaleSize, scaleSize, scaleSize };
+ 			ITransform::Scale(tf2,{ scaleSize, scaleSize, scaleSize });
 			pos += offset;
 
 			auto model2 = mods->AddModule<MModel>(box2);

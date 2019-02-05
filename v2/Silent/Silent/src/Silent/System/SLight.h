@@ -17,8 +17,6 @@ namespace Silent
 					std::shared_ptr<MLight> light)
 			: _tf(tf), _light(light) {}
 		~LightStruct() = default;
-
-		glm::vec3& Translation() { return _tf->_translate; }
 	};
 
 	class SILENT_API SLight : public System
