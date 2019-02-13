@@ -187,8 +187,9 @@ namespace Silent
 			{
 				if (mod->_entity == entity)
 				{
-					mod->_entity->modules.erase(typeid(T));
-;					modules[typeid(T)].erase(mod);
+					mod->_entity->modTypes.erase(typeid(T));
+					//mod->_entity->mods.erase(mod);
+					modules[typeid(T)].erase(mod);
 					typesModified[typeid(T)] = true;
 					typesCounter[typeid(T)].second++;
 					return true;
@@ -272,8 +273,8 @@ namespace Silent
 		}
 
 		template<typename T, typename S, typename... Arg>
-		MapTypeToConModulePtr GetModules(bool useFilter = true, 
-										 bool onlyActive = true)
+		inline MapTypeToConModulePtr GetModules(bool useFilter = true,
+												bool onlyActive = true)
 		{
 			static std::set<std::type_index> types{ typeid(T), 
 				typeid(S), typeid(Arg)... };
@@ -318,105 +319,5 @@ namespace Silent
 
 			return map;
 		}
-
-// 		template<typename T, typename S, typename... Arg>
-// 		inline MapTypeToConModulePtr GetModulesFiltered(bool onlyActive = true)
-// 		{
-// 			MapTypeToConModulePtr map;
-// 			MapTypeToConModulePtr filter = GetModulesAddedThisFrame<T, S, Arg...>(onlyActive);
-// 
-// 			static std::set<ModuleReference> types{ ModuleReference(typeid(T)),
-// 				ModuleReference(typeid(S)), ModuleReference(typeid(Arg))... };
-// 			for (const auto& type : types) if (!filter.count(type.t)) return map;
-// 
-// 			const auto& entities = Singleton<Entities>::Instance().GetEntities();
-// 			std::set<EntityID> ids;
-// 
-// 			// Get all valid ID's
-// // 			for (const auto& entity : entities)
-// // 			{
-// // 				const auto& mods = entity->modules;
-// // 				//std::sort(mods.begin(), mods.end());
-// // 				if (std::includes(mods.begin(), mods.end(),
-// // 								  types.begin(), types.end()))
-// // 				{
-// // 					//ids.emplace(entity->_entityID);
-// // 					map[mods.t].emplace(mods.m);
-// // 				}
-// // 			}
-// 
-// 			std::set<ModuleReference> intersection;
-// 			for (const auto& entity : entities)
-// 			{
-// 				const auto& mods = entity->modules;
-// 				std::set_intersection(mods.begin(), mods.end(), 
-// 									  types.begin(), types.end(), 
-// 									  std::inserter(intersection, 
-// 													intersection.begin()));
-// 				if (intersection.size() == types.size())
-// 				{
-// 					for (auto& i : intersection)
-// 					{
-// 						map[i.t].emplace(i.m);
-// 					}
-// 				}
-// 			}
-// 
-// 			// Get all the modules 
-// // 			for (const auto& type : types)
-// // 			{
-// // 				for (const auto& mod : filter[type.t])
-// // 				{
-// // 					if (std::find(ids.begin(), ids.end(),
-// // 								  mod->_entity->_entityID) != ids.end())
-// // 					{
-// // 						map[type.t].emplace(mod);
-// // 					}
-// // 				}
-// // 			}
-// 
-// 			return map;
-// 		}
-// 
-// 		template<typename T, typename S, typename... Arg>
-// 		MapTypeToConModulePtr GetModulesUnfiltered(bool onlyActive = true)
-// 		{
-// 			MapTypeToConModulePtr map;
-// 			static std::set<ModuleReference> types { ModuleReference(typeid(T)), 
-// 				ModuleReference(typeid(S)), ModuleReference(typeid(Arg))... };
-// 			for (const auto& type : types)
-// 			{
-// 				if (modules.count(type.t) == 0) return map;
-// 			}
-// 			
-// 			const auto& entities = Singleton<Entities>::Instance().GetEntities();
-// 			std::set<EntityID> ids;
-// 
-// 			// Get all valid ID's
-// 			for (const auto& entity : entities)
-// 			{
-// 				const auto& mods = entity->modules;
-// 				if (std::includes(mods.begin(), mods.end(),
-// 								  types.begin(), types.end()))
-// 				{
-// 					ids.emplace(entity->_entityID);
-// 				}
-// 			}
-// 
-// 			// Get all the modules 
-// 			for (const auto& type : types)
-// 			{
-// 				for (const auto& mod : modules[type.t])
-// 				{
-// 					if (std::find(ids.begin(), ids.end(),
-// 								  mod->_entity->_entityID) != ids.end())
-// 					{
-// 						map[type.t].emplace(mod.get());
-// 					}
-// 				}
-// 			}
-// 
-// 			return map;
-// 		}
 	};
 }

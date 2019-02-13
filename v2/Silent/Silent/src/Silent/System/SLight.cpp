@@ -18,15 +18,15 @@ namespace Silent
 	{
 		if (_lights.size() == 1) return;
 		auto newTranslation = 
-			ITransform::Translation(_cameraSystem->GetCameras()._camtf);
+			_cameraSystem->GetCameras()._camtf->translation;
 		if (cameraPos == newTranslation) return;
 		cameraPos = newTranslation;
 
 		// Sort the lights by distance from the camera
 		const auto& checkDistance = [=] (LightStruct& a, LightStruct& b)
 		{
-			auto aDist = glm::distance(cameraPos, ITransform::Translation(a._tf));
-			auto bDist = glm::distance(cameraPos, ITransform::Translation(b._tf));
+			auto aDist = glm::distance(cameraPos, a._tf->translation);
+			auto bDist = glm::distance(cameraPos, b._tf->translation);
 			return aDist < bDist;
 		};
 
@@ -111,7 +111,7 @@ namespace Silent
 			{
 				DataSelectable<LightStruct>(
 					cSelected, cName, cData, i, 
-					ITransform::Name(light._tf), &light);
+					light._tf->name, &light);
 			}
 
 			ImGui::EndCombo();

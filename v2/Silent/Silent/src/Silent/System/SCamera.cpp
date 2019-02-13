@@ -25,10 +25,10 @@ namespace Silent
 	{
 		float moveSpeed = translationSpeed * dt;
 		bool translated = false;
-		auto newTranslation = ITransform::Translation(_cam._camtf);
-		auto fd = ITransform::ForwardVector(_cam._camtf) * moveSpeed;
-		auto rt = ITransform::RightVector(_cam._camtf) * moveSpeed;
-		auto up = ITransform::UpVector(_cam._camtf) * moveSpeed;
+		auto newTranslation = _cam._camtf->translation;
+		auto fd = _cam._camtf->forwardVector * moveSpeed;
+		auto rt = _cam._camtf->rightVector * moveSpeed;
+		auto up = _cam._camtf->upVector * moveSpeed;
 		if (ImGui::IsKeyDown(SDL_SCANCODE_W))
 		{
 			newTranslation += fd;
@@ -70,7 +70,7 @@ namespace Silent
 		mouseDelta.y *= 0.01f;
 
 		const float MaxLookHeight = 89.9f;
-		auto rot = ITransform::Rotation(_cam._camtf);
+		auto rot = _cam._camtf->rotation;
 
 		rot[0] += mouseDelta.x * rotationSpeed;
 		rot[1] = glm::clamp(rot[1] - (mouseDelta.y * rotationSpeed),

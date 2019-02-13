@@ -25,13 +25,17 @@ namespace Silent
 		std::vector<glm::mat4> model;
 	};
 
-
+	class SILENT_API Renderer;
 	class SILENT_API SRender : public System
 	{
 		std::map<ModelStructure, ModelMatrixStructure> _models;
 
 		void UpdateModels();
 		void UpdateModelMatrix();
+		void SendModelMatrixData(Renderer * renderer, std::shared_ptr<RMesh> mesh,
+								 std::vector<glm::mat4>& model);
+
+		int totalObjectsRendered = 0;
 
 	public:
 		SLight * _lightSystem;
@@ -48,6 +52,5 @@ namespace Silent
 		virtual void IncrementalUpdateModules(Modules& modules) override;
 
 		virtual void DebugInfo() override;
-
 	};
 }

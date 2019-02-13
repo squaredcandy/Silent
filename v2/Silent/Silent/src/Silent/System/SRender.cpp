@@ -30,8 +30,42 @@ namespace Silent
 			{
 				if (ITransform::MatrixUpdated(model.tf[i]))
 				{
-					model.model[i] = ITransform::ModelMatrix(model.tf[i]);
+					model.model[i] = model.tf[i]->modelMatrix;
 				}
+			}
+		}
+	}
+
+	void SRender::SendModelMatrixData(Renderer * renderer,
+									  std::shared_ptr<RMesh> mesh,
+									  std::vector<glm::mat4>& model)
+	{
+		// We smaller than the batch size
+		// We only do it once and dont have to copy vectors
+		auto totalSize = (int) model.size();
+		totalObjectsRendered += totalSize;
+		if (totalSize < MaxBatchSize<glm::mat4>())
+		{
+			renderer->MapModelData(mesh->GetMeshID(), model);
+			renderer->DrawModelInstanced(mesh->GetMeshID(), totalSize);
+		}
+		else
+		{
+			int splitIdx = 0;
+			while (splitIdx * MaxBatchSize<glm::mat4>() < totalSize)
+			{
+				// Split the vector into smaller sizes
+				const auto batchSize = MaxBatchSize<glm::mat4>();
+				auto currentSplitSize = splitIdx * batchSize;
+				auto nextSplitSize = (splitIdx + 1) * batchSize;
+				std::vector<glm::mat4> sub (model.begin() + currentSplitSize, 
+					(nextSplitSize < totalSize) ? 
+					model.begin() + nextSplitSize : model.end());
+
+				renderer->MapModelData(mesh->GetMeshID(), sub);
+				renderer->DrawModelInstanced(mesh->GetMeshID(), totalSize);
+
+				++splitIdx;
 			}
 		}
 	}
@@ -54,7 +88,7 @@ namespace Silent
 
 			BufferID currentBufferID = 0u;
 			ShaderID currentShaderID = 0u;
-			for (auto&[key, val] : _models)
+			for (auto& [key, val] : _models)
 			{
 				const auto& buffer = key.buffer;
 				// if we arent switching buffers we use the last buffer
@@ -81,64 +115,35 @@ namespace Silent
 
 				// Set each shaders uniform
 				// possibly a bug here were we dont set all the default params
-				for (const auto&[key, val] : material->uniformParams)
+				for (const auto& [name, var] : material->uniformParams)
 				{
-					shader->SetUniform(key, val);
+					shader->SetUniform(name, var);
 				}
 
-				shader->SetUniform("viewPos", 
-						ITransform::Translation(cam._camtf));
+				shader->SetUniform("viewPos", cam._camtf->translation);
 				// TODO: Slow - Redo this sometime
 				std::vector<LightStruct> light = _lightSystem->GetLights(1);
-				
-				shader->SetUniform("lightPos", ITransform::Translation(light[0]._tf));
+				shader->SetUniform("lightPos", light[0]._tf->translation);
 
 				// Assign all the textures
-				for (const auto&[key, val] : material->_textures)
+				for (const auto& [name, var] : material->_textures)
 				{
-					renderer->SetTexture(key, val->GetTextureID());
+					renderer->SetTexture(name, var->GetTextureID());
 				}
 
-				// We smaller than the batch size
-				// We only do it once and dont have to copy vectors
-				auto totalSize = (int) val.model.size();
-				totalObjectsRendered += totalSize;
-				if (totalSize < MaxBatchSize<glm::mat4>())
-				{
-					renderer->MapModelData(mesh->GetMeshID(), val.model);
-					renderer->DrawModelInstanced(mesh->GetMeshID(), totalSize);
-				}
-				else
-				{
-					int splitIdx = 0;
-					while (splitIdx * MaxBatchSize<glm::mat4>() < totalSize)
-					{
-						// Split the vector into smaller sizes
-						const auto batchSize = MaxBatchSize<glm::mat4>();
-						auto currentSplitSize = splitIdx * batchSize;
-						auto nextSplitSize = (splitIdx + 1) * batchSize;
-						std::vector<glm::mat4> sub (
-							val.model.begin() + currentSplitSize,
-							(nextSplitSize < totalSize) ?
-							val.model.begin() + nextSplitSize : val.model.end());
+				SendModelMatrixData(renderer, mesh, val.model);
 
-						renderer->MapModelData(mesh->GetMeshID(), sub);
-						renderer->DrawModelInstanced(mesh->GetMeshID(), totalSize);
-
-						++splitIdx;
-					}
-				}
-
-				// Check if it is the last or the next iterator does not have the same buffer
+				// Check if it is the last or 
+				// the next iterator does not have the same buffer
 				if (key == _models.rbegin()->first ||
-					(*(_models.find(key)++)).first.buffer->GetBufferID() != currentBufferID)
+					(*(_models.find(key)++)).first.buffer->GetBufferID() 
+					!= currentBufferID)
 				{
 					buffer->End();
 				}
 			}
-
-			ImGui::End();
 		}
+		ImGui::End();
 		ImGui::PopStyleVar();
 
 		if(ImGui::Begin("Stats", &a))
@@ -180,8 +185,7 @@ namespace Silent
 
 				auto& matrixStruct = _models[{ rdr->buffer, mdl->mesh, mdl->material }];
 				matrixStruct.tf.emplace_back(tf);
-				//tf->_modelMatrix = ITransform::UpdateModelMatrix(tf.get());
-				matrixStruct.model.emplace_back(ITransform::ModelMatrix(tf));
+				matrixStruct.model.emplace_back(tf->modelMatrix);
 			}
 		}
 	}
@@ -191,8 +195,7 @@ namespace Silent
 		// Get the models
 		if (modules.TypeModified<MTransform, MModel, MRender>())
 		{
-			_modules = modules.GetModules
-				<MTransform, MModel, MRender>(false);
+			_modules = modules.GetModules<MTransform, MModel, MRender>(false);
 			UpdateModels();
 		}
 	}
@@ -204,15 +207,24 @@ namespace Silent
 		// Get the models
 		if (modules.TypeModified<MTransform, MModel, MRender>())
 		{
-			_modules = modules.GetModules
-				<MTransform, MModel, MRender>();
+			if (modules.WasAModuleRemovedThisFrame<MTransform, MModel, MRender>())
+			{
+				for (auto&[key, val] : _models)
+				{
+					
+				}
+			}
+			_modules = modules.GetModules<MTransform, MModel, MRender>();
 			UpdateModels();
 		}
 	}
 
 	void SRender::DebugInfo()
 	{
-
+		if (ImGui::Button("Remove 0"))
+		{
+			auto& eee = Singleton<Entities>::Instance().GetEntities();
+			Singleton<Modules>::Instance().RemoveModule<MModel>(eee[1]);
+		}
 	}
-
 }

@@ -4,7 +4,6 @@
 
 namespace Silent
 {
-
 	const std::map<std::type_index, std::pair<int, int>>& 
 		Modules::GetModifiedCounter()
 	{
@@ -15,11 +14,11 @@ namespace Silent
 	{
 		if (!typesHandled.empty())
 		{
-			for (const auto& [key, val] : typesHandled)
-			{
-				typesModified[key] = false;
-				typesCounter[key] = { 0, 0 };
-			}
+// 			for (const auto& [key, val] : typesHandled)
+// 			{
+// 				typesModified[key] = false;
+// 				typesCounter[key] = { 0, 0 };
+// 			}
 			typesHandled.clear();
 		}
 	}

@@ -35,6 +35,8 @@
     <ClInclude Include="src\Silent\System\SInput.h" />
     <ClInclude Include="src\Silent\System\SLight.h" />
     <ClInclude Include="src\Silent\System\SRender.h" />
+    <ClInclude Include="src\Silent\Stack\Stack.h" />
+    <ClInclude Include="src\Silent\ApplicationStack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Silent\Application.cpp" />
@@ -70,6 +72,7 @@
     <ClCompile Include="src\Silent\System\SLight.cpp" />
     <ClCompile Include="src\Silent\System\SRender.cpp" />
     <ClCompile Include="src\Silent\System\SSetting.cpp" />
+    <ClCompile Include="src\Silent\ApplicationStack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\Vendor\ImGui\imgui.natvis" />

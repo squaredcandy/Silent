@@ -64,7 +64,7 @@ namespace Silent
 
 		// Model Vectors
 		glm::vec3 _translate;
-		glm::vec3 _rotate; // I should store this a quaterion
+		glm::vec3 _rotate; // I should store this a quarterion
 		glm::vec3 _scale;
 
 		// Direction Vectors
@@ -74,16 +74,34 @@ namespace Silent
 
 		glm::mat4 _modelMatrix;
 		// Check if we need to update the matrix data in the renderer
-		bool matrixUpdated;
+		bool _matrixUpdated;
+
 	public:
+		const std::string& name;
+		const std::shared_ptr<Entity>& parent;
+
+		const glm::vec3& translation;
+		const glm::vec3& rotation;
+		const glm::vec3& scale;
+		
+		const glm::vec3& forwardVector;
+		const glm::vec3& rightVector;
+		const glm::vec3& upVector;
+
+		const glm::mat4& modelMatrix;
+		const bool matrixUpdated;
 
 		MTransform(std::string name = "", 
 						 std::shared_ptr<Entity> parent = nullptr,
 						 glm::vec3 translation = glm::vec3(), 
 						 glm::vec3 rotation = glm::vec3(),
 						 glm::vec3 scale = glm::vec3(1)) :
-			_name(name), _parent(parent), 
-			_translate(translation), _rotate(rotation), _scale(scale) {}
+			_name(name), _parent(parent), name(_name), parent(_parent),
+			_translate(translation), _rotate(rotation), _scale(scale),
+			translation(_translate), rotation(_rotate), scale(_scale),
+			forwardVector(_forwardVector), rightVector(_rightVector),
+			upVector(_upVector), modelMatrix(_modelMatrix), 
+			matrixUpdated(_matrixUpdated) {}
 		virtual ~MTransform() = default;
 
 		friend class ITransform;
@@ -93,16 +111,20 @@ namespace Silent
 	class SILENT_API MCamera : public Module
 	{
 	private:
-		float fov = 45.f;
-		float nearPlane = 0.05f;
-		float farPlane = 1000000.f;
+		float _fov = 45.f;
+		float _nearPlane = 0.05f;
+		float _farPlane = 1000000.f;
 
 	public:
+		float& fov;
+		float& nearPlane;
+		float& farPlane;
+
 		// Is this the current camera?
 		// TODO: probably put this in a better place
 		bool currentCamera = false;
 
-		MCamera() = default;
+		MCamera() : fov(_fov), nearPlane(_nearPlane), farPlane(_farPlane) {}
 		virtual ~MCamera() = default;
 
 		friend class ICamera;

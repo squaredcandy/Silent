@@ -18,8 +18,7 @@ namespace Silent
 	using MaterialID = unsigned int;
 
 	// Apprently the optimal batch size is about 1-4MB
-	// Make a function that does 1,000,000 / sizeof(Type) to give a batch size
-	const int BATCH_SIZE = 1000000;
+	const int BATCH_SIZE = 500000;
 
 	template<typename T> 
 	constexpr int MaxBatchSize()

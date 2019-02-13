@@ -1,9 +1,8 @@
 #pragma once
 #include "Core.h"
-#include "Platform/Platforms.h"
-
 #include <functional>
 
+#include "Platform/Platforms.h"
 #include "Resource/Resources.h"
 #include "Entity/Entities.h"
 #include "Module/Modules.h"
@@ -25,7 +24,6 @@ namespace Silent {
 
 		SSetting * settings;
 		SDebug * debug;
-
 	public:
 		int platformType = SL_PLATFORM_NONE;
 		int rendererType = SL_RENDERER_NONE;

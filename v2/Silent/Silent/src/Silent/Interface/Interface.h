@@ -22,7 +22,7 @@ namespace Silent
 			tf->_modelMatrix = glm::rotate(tf->_modelMatrix, glm::radians(tf->_rotate.x), xRot);
 			tf->_modelMatrix = glm::rotate(tf->_modelMatrix, glm::radians(tf->_rotate.y), yRot);
 			tf->_modelMatrix = glm::rotate(tf->_modelMatrix, glm::radians(tf->_rotate.z), zRot);
-			tf->matrixUpdated = true;
+			tf->_matrixUpdated = true;
 		}
 	public:
 		template<typename T> static inline void UpdateRotationVectors(T tf)
@@ -75,51 +75,59 @@ namespace Silent
 				UpdateModelMatrix(tf);
 			}
 		}
-		template<typename T> static inline const std::string& Name(T tf)
-		{
-			return tf->_name;
-		}
-		template<typename T> static inline const glm::vec3& Translation(T tf)
-		{
-			return tf->_translate;
-		}
-		template<typename T> static inline const glm::vec3& Rotation(T tf)
-		{
-			return tf->_rotate;
-		}
-		template<typename T> static inline const glm::vec3& Scale(T tf)
-		{
-			return tf->_scale;
-		}
-		template<typename T> static inline const glm::vec3& ForwardVector(T tf)
-		{
-			return tf->_forwardVector;
-		}
-		template<typename T> static inline const glm::vec3& RightVector(T tf)
-		{
-			return tf->_rightVector;
-		}
-		template<typename T> static inline const glm::vec3& UpVector(T tf)
-		{
-			return tf->_upVector;
-		}
+// 		template<typename T> static inline const std::string& Name(T tf)
+// 		{
+// 			return tf->_name;
+// 		}
+// 		template<typename T> static inline const glm::vec3& Translation(T tf)
+// 		{
+// 			return tf->_translate;
+// 		}
+// 		template<typename T> static inline const glm::vec3& Rotation(T tf)
+// 		{
+// 			return tf->_rotate;
+// 		}
+// 		template<typename T> static inline const glm::vec3& Scale(T tf)
+// 		{
+// 			return tf->_scale;
+// 		}
+// 		template<typename T> static inline const glm::vec3& ForwardVector(T tf)
+// 		{
+// 			return tf->_forwardVector;
+// 		}
+// 		template<typename T> static inline const glm::vec3& RightVector(T tf)
+// 		{
+// 			return tf->_rightVector;
+// 		}
+// 		template<typename T> static inline const glm::vec3& UpVector(T tf)
+// 		{
+// 			return tf->_upVector;
+// 		}
+// 		template<typename T> static inline const glm::mat4& ModelMatrix(T tf)
+// 		{
+// 			return tf->_modelMatrix;
+// 		}
 		template<typename T> static inline const glm::mat4  ViewMatrix(T tf)
 		{
 			return glm::lookAt(tf->_translate,
 							   tf->_translate + tf->_forwardVector,
 							   tf->_upVector);
 		}
-		template<typename T> static inline const glm::mat4& ModelMatrix(T tf)
-		{
-			return tf->_modelMatrix;
-		}
-		template<typename T> static inline const bool       MatrixUpdated(T tf)
-		{
-			return tf->matrixUpdated;
-		}
 		template<typename T> static inline const glm::vec3  FaceCameraVector(T tf)
 		{
 			return { 0, tf._rotate.x + 90.f, 0 };
+		}
+		template<typename T> static inline const bool       MatrixUpdated(T tf)
+		{
+			if (tf->_matrixUpdated)
+			{
+				tf->_matrixUpdated = false;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 	};
 
@@ -127,18 +135,18 @@ namespace Silent
 	{
 	private:
 	public:
-		template<typename T> static inline       float&     Fov(T c)
-		{
-			return c->fov;
-		}
-		template<typename T> static inline       float&     NearPlane(T c)
-		{
-			return c->nearPlane;
-		}
-		template<typename T> static inline       float&     FarPlane(T c)
-		{
-			return c->farPlane;
-		}
+// 		template<typename T> static inline       float&     Fov(T c)
+// 		{
+// 			return c->fov;
+// 		}
+// 		template<typename T> static inline       float&     NearPlane(T c)
+// 		{
+// 			return c->nearPlane;
+// 		}
+// 		template<typename T> static inline       float&     FarPlane(T c)
+// 		{
+// 			return c->farPlane;
+// 		}
 		template<typename T> static inline const glm::mat4  ProjectionMatrix(T c, ImVec2& size)
 		{
 			return glm::perspective(c->fov, size.x / size.y, c->nearPlane, c->farPlane);

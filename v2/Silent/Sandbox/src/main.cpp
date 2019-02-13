@@ -1,5 +1,7 @@
 #include <Silent.h>
 
+#include <ImGui/imgui.h>
+
 using namespace Silent;
 class Sandbox : public Silent::Application
 {
@@ -42,7 +44,7 @@ protected:
  		auto cam = ents->AddEntity("Camera");
  		auto modCam = mods->AddModule<MCamera>(cam);
  		modCam->currentCamera = true;
-		ICamera::NearPlane(modCam) = 0.01f;
+		modCam->nearPlane = 0.01f;
 		sysCam->translationSpeed = 1;
 
 		auto texWhite = ress->LoadResource<RTexture>("slash.png", platform->renderer);
@@ -52,11 +54,6 @@ protected:
 		matWhite->AddParameter("sprite", 0);
 		auto light = ents->AddEntity("Light");
 		auto lightModTf = mods->GetModule<MTransform>(light);
-		
-		//auto a = ITransform::Translation(lightModTf);
-		//auto& b = ITransform::Translation(lightModTf);
-		//a = { 1, 1, 1 };
-		//b = { 1, 2, 1 };
 
 		const float scaleSize = 0.001f;
 		ITransform::Scale(lightModTf, { scaleSize, scaleSize, scaleSize });
@@ -72,7 +69,7 @@ protected:
 // 		model->material = mat;
 // 
 // 		auto modRender = mods->AddModule<MRender>(box);
-//  		modRender->buffer = buffer;
+//  	modRender->buffer = buffer;
  		fn1.SetFrequency(0.2f);
  		fn2.SetFrequency(0.2f);
  		fn3.SetFrequency(0.2f);
@@ -121,6 +118,8 @@ protected:
 		static int i = 0;
 		static Uint32 timer = 0;
 		timer += dt;
+		return;
+
 		if (timer > 0 && ents->GetEntities().size() <= 1000)
 		{
 			timer = 0;

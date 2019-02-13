@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Silent\ApplicationStack.h" />
     <ClInclude Include="src\Silent\Interface\Interface.h" />
     <ClInclude Include="src\Silent.h" />
     <ClInclude Include="src\Silent\Application.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="src\Silent\Resource\RMesh.h" />
     <ClInclude Include="src\Silent\Resource\RShader.h" />
     <ClInclude Include="src\Silent\Resource\RTexture.h" />
+    <ClInclude Include="src\Silent\Stack\Stack.h" />
     <ClInclude Include="src\Silent\System\SCamera.h" />
     <ClInclude Include="src\Silent\System\SDebug.h" />
     <ClInclude Include="src\Silent\System\SInput.h" />
@@ -54,6 +56,7 @@
     <ClCompile Include="..\Vendor\ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\Vendor\ImGui\imgui_impl_sdl.cpp" />
     <ClCompile Include="..\Vendor\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Silent\ApplicationStack.cpp" />
     <ClCompile Include="src\Silent\Interface\Interface.cpp" />
     <ClCompile Include="src\Silent\Application.cpp" />
     <ClCompile Include="src\Silent\Entity\Entities.cpp" />
