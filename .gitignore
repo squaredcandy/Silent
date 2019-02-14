@@ -17,3 +17,6 @@
 *.enc
 *.rar
 *.enc
+
+!./
+!/v2/Silent/Sandbox/**

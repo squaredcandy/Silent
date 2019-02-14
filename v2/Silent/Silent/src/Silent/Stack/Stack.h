@@ -8,6 +8,7 @@ namespace Silent
 	// add derivatives of this class to a vector 
 	class Stack
 	{
+	public:
 		bool active = true;
 		Stack() = default;
 		virtual ~Stack() = default;

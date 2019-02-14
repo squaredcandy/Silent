@@ -7,6 +7,7 @@ namespace Silent
 {
 	class ApplicationStack
 	{
+	public:
 		std::vector<std::unique_ptr<Stack>> stack;
 		std::vector<std::unique_ptr<Stack>>::iterator stackEnd;
 
