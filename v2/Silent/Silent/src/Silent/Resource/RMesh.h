@@ -3,7 +3,7 @@
 #include "../Core.h"
 #include "Resource.h"
 
-#include "../Renderer/Renderer.h"
+#include "../Renderer/LRenderer.h"
 
 namespace Silent
 {
@@ -11,10 +11,9 @@ namespace Silent
 	{
 	protected:
 		MeshID _meshID;
-		Renderer * _renderer;
+		LRenderer * _renderer = nullptr;
 	public:
-		RMesh(std::string name = "");
-		RMesh(std::string name, Renderer * renderer);
+		RMesh(std::string name = "", LRenderer * renderer = nullptr);
 		virtual ~RMesh() = default;
 
 		void Cleanup() override;

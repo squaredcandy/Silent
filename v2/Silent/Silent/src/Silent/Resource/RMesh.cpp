@@ -2,13 +2,7 @@
 
 namespace Silent
 {
-	RMesh::RMesh(std::string name) : Resource()
-	{
-		
-	}
-
-	RMesh::RMesh(std::string name, Renderer * renderer)
-		: Resource(), _renderer(renderer)
+	RMesh::RMesh(std::string name, LRenderer * renderer) : Resource(name), _renderer(renderer)
 	{
 		_meshID = _renderer->LoadModel(name);
 	}

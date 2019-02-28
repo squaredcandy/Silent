@@ -20,13 +20,13 @@ namespace Silent
 
 	float Random::RandomFloat(float exclusiveMax)
 	{
-		std::uniform_real_distribution<> dist(0, exclusiveMax - 1.f);
+		std::uniform_real_distribution<> dist(0.f, exclusiveMax - 1.f);
 		return (float) dist(mt);
 	}
 
 	float Random::RandomFloat(float min, float max)
 	{
-		std::uniform_real_distribution<> dist(0, max - min);
+		std::uniform_real_distribution<> dist(0.f, max - min);
 		return (float) dist(mt) + min;
 	}
 

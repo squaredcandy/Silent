@@ -5,16 +5,26 @@
 // our engine
 namespace Silent
 {
-	// These are just points wrapped up in a class so we can safely pass it 
-	// around. It also abstracts the functionality of the pointers
+	using ResourceID = unsigned int;
+
+	inline ResourceID GenerateResourceID()
+	{
+		// ID = 0 would be invalid
+		static ResourceID id = 1;
+		return id++;
+	}
+
 	class SILENT_API Resource
 	{
 	public:
+		ResourceID id = GenerateResourceID();
+		const std::string _name;
 		bool _initialized;
 
-		Resource() : _initialized(false) {}
+		Resource(std::string name = "") : _name(name), _initialized(false) {}
 		virtual ~Resource() = default;
 
+		virtual inline void Load() = 0;
 		virtual inline void Cleanup() = 0;
 	};
 }

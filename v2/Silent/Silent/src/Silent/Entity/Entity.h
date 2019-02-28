@@ -1,9 +1,8 @@
 #pragma once
+#include "../Core.h"
 
-#include <set>
-#include <vector>
-#include <typeindex>
-
+#include <bitset>
+#define MAX_COMPONENTS 64
 namespace Silent
 {
 	using EntityID = unsigned int;
@@ -20,11 +19,9 @@ namespace Silent
 	class SILENT_API Entity
 	{
 	public:
-		EntityID _entityID = GenerateEntityID();
+		const EntityID _entityID = GenerateEntityID();
+		std::bitset<MAX_COMPONENTS> components;
 		bool _active = true;
-
-		std::set<std::type_index> modTypes;
-		std::vector<Module *> mods;
 
 		Entity() = default;
 		~Entity() = default;
@@ -33,10 +30,21 @@ namespace Silent
 		{
 			return _entityID < other._entityID;
 		}
-
 		inline bool operator==(const Entity& other) const
 		{
 			return _entityID == other._entityID;
+		}
+		inline void AddComponent(unsigned int id)
+		{
+			components[id] = true;
+		}
+		inline void RemoveComponent(unsigned int id)
+		{
+			components[id] = false;
+		}
+		inline bool HasComponent(unsigned int id)
+		{
+			return components[id];
 		}
 	};
 }

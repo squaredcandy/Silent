@@ -11,41 +11,66 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Silent\ApplicationStack.h" />
+    <ClInclude Include="src\Silent\Event\EntityEvent.h" />
+    <ClInclude Include="src\Silent\Event\Event.h" />
+    <ClInclude Include="src\Silent\Event\EventDispatcher.h" />
+    <ClInclude Include="src\Silent\Event\Events.h" />
+    <ClInclude Include="src\Silent\Event\ModuleEvent.h" />
+    <ClInclude Include="src\Silent\ImGui\ImGuiSDLGL.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="src\Silent\Layer\Layers.h" />
+    <ClInclude Include="src\Silent\ImGui\LImGui.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="src\Silent\Module\LModule.h" />
+    <ClInclude Include="src\Silent\Resource\LResource.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="src\Silent\Resource\RTexture.h" />
+    <ClInclude Include="src\Silent\Utility\Debug.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="src\Silent\Utility\Locator.h" />
+    <ClInclude Include="src\Silent\Utility\Input.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="src\Silent\Layer\LLog.h" />
+    <ClInclude Include="src\Silent\Platform\LPlatform.h" />
+    <ClInclude Include="src\Silent\Platform\LPlatformSDL.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="src\Silent\Renderer\LRenderer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="src\Silent\Renderer\LRendererGL3.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="src\Silent\Utility\Stacks.h" />
     <ClInclude Include="src\Silent\Interface\Interface.h" />
     <ClInclude Include="src\Silent.h" />
     <ClInclude Include="src\Silent\Application.h" />
-    <ClInclude Include="src\Silent\Entity\Entities.h" />
+    <ClInclude Include="src\Silent\Entity\LEntity.h" />
     <ClInclude Include="src\Silent\Entity\Entity.h" />
     <ClInclude Include="src\Silent\Module\Module.h" />
-    <ClInclude Include="src\Silent\Module\Modules.h" />
-    <ClInclude Include="src\Silent\Platform\Platforms.h" />
     <ClInclude Include="src\Silent\Core.h" />
     <ClInclude Include="src\Silent\EntryPoint.h" />
-    <ClInclude Include="src\Silent\Platform\Platform.h" />
-    <ClInclude Include="src\Silent\Platform\Platform_SDL.h" />
     <ClInclude Include="src\Silent\Resource\RBuffer.h" />
     <ClInclude Include="src\Silent\Resource\RMaterial.h" />
     <ClInclude Include="src\Silent\Resource\RMesh.h" />
     <ClInclude Include="src\Silent\Resource\RShader.h" />
-    <ClInclude Include="src\Silent\Resource\RTexture.h" />
-    <ClInclude Include="src\Silent\Stack\Stack.h" />
-    <ClInclude Include="src\Silent\System\SCamera.h" />
-    <ClInclude Include="src\Silent\System\SDebug.h" />
-    <ClInclude Include="src\Silent\System\SInput.h" />
-    <ClInclude Include="src\Silent\System\SLight.h" />
-    <ClInclude Include="src\Silent\System\SRender.h" />
+    <ClInclude Include="src\Silent\Layer\Layer.h" />
     <ClInclude Include="src\Silent\Utility\PrecompiledHeader.h" />
     <ClInclude Include="src\Silent\Utility\Random.h" />
-    <ClInclude Include="src\Silent\Renderer\Renderers.h" />
-    <ClInclude Include="src\Silent\Renderer\Renderer.h" />
-    <ClInclude Include="src\Silent\Renderer\Renderer_GL3.h" />
     <ClInclude Include="src\Silent\Resource\Resource.h" />
-    <ClInclude Include="src\Silent\Resource\Resources.h" />
-    <ClInclude Include="src\Silent\Utility\Singleton.h" />
-    <ClInclude Include="src\Silent\System\System.h" />
-    <ClInclude Include="src\Silent\System\Systems.h" />
-    <ClInclude Include="src\Silent\System\SSetting.h" />
     <ClInclude Include="src\Silent\Utility\Utility.h" />
   </ItemGroup>
   <ItemGroup>
@@ -56,25 +81,53 @@
     <ClCompile Include="..\Vendor\ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\Vendor\ImGui\imgui_impl_sdl.cpp" />
     <ClCompile Include="..\Vendor\ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="src\Silent\ApplicationStack.cpp" />
+    <ClCompile Include="src\Silent\Entity\Entity.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Silent\ImGui\ImGuiSDLGL.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Silent\Module\LModule.cpp" />
+    <ClCompile Include="src\Silent\Platform\LPlatform.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Silent\Renderer\LRenderer.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Silent\Resource\LResource.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Silent\Utility\Debug.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Silent\Utility\Input.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Silent\Layer\LLog.cpp" />
+    <ClCompile Include="src\Silent\Platform\LPlatformSDL.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Silent\Renderer\LRendererGL3.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Silent\Utility\Stacks.cpp" />
     <ClCompile Include="src\Silent\Interface\Interface.cpp" />
     <ClCompile Include="src\Silent\Application.cpp" />
-    <ClCompile Include="src\Silent\Entity\Entities.cpp" />
-    <ClCompile Include="src\Silent\Module\Modules.cpp" />
-    <ClCompile Include="src\Silent\Platform\Platforms.cpp" />
-    <ClCompile Include="src\Silent\Platform\Platform_SDL.cpp" />
+    <ClCompile Include="src\Silent\Entity\LEntity.cpp" />
     <ClCompile Include="src\Silent\Resource\RBuffer.cpp" />
-    <ClCompile Include="src\Silent\Resource\Resource.cpp" />
     <ClCompile Include="src\Silent\Resource\RMaterial.cpp" />
     <ClCompile Include="src\Silent\Resource\RMesh.cpp" />
     <ClCompile Include="src\Silent\Resource\RShader.cpp" />
     <ClCompile Include="src\Silent\Resource\RTexture.cpp" />
-    <ClCompile Include="src\Silent\System\SCamera.cpp" />
-    <ClCompile Include="src\Silent\System\SDebug.cpp" />
-    <ClCompile Include="src\Silent\System\SInput.cpp" />
-    <ClCompile Include="src\Silent\System\SLight.cpp" />
-    <ClCompile Include="src\Silent\System\SRender.cpp" />
-    <ClCompile Include="src\Silent\System\SSetting.cpp" />
     <ClCompile Include="src\Silent\Utility\PrecompiledHeader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PrecompiledHeader.h</PrecompiledHeaderFile>
@@ -82,11 +135,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PrecompiledHeader.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\Silent\Utility\Random.cpp" />
-    <ClCompile Include="src\Silent\Renderer\Renderers.cpp" />
-    <ClCompile Include="src\Silent\Renderer\Renderer_GL3.cpp" />
-    <ClCompile Include="src\Silent\Resource\Resources.cpp" />
-    <ClCompile Include="src\Silent\Utility\Singleton.cpp" />
-    <ClCompile Include="src\Silent\System\Systems.cpp" />
     <ClCompile Include="src\Silent\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -134,7 +182,7 @@
     <OutDir>$(SolutionDir)Bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -142,7 +190,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>SL_PLATFORM_WINDOWS;SL_BUILD_DLL;_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SL_PLATFORM_WINDOWS;SL_BUILD_DLL;_CRT_SECURE_NO_WARNINGS;_WINDLL;_CRTDBG_MAP_ALLOC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PrecompiledHeader.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -156,6 +204,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Vendor\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc140-mt.lib;glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;SDL2.lib;SDL2main.lib;zlib.lib;zlibstatic.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -174,7 +224,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Vendor;$(SolutionDir)Silent\src\Silent\Utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
-      <EnablePREfast>true</EnablePREfast>
+      <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

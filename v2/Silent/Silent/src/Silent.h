@@ -1,15 +1,16 @@
 #pragma once
 
-#include "Silent/Utility/Singleton.h"
-
+// Utility Stuff
 #include "Silent/Utility/Random.h"
-
-// Include all the backends
-#include "Silent/Platform/Platforms.h"
 
 // For use by Silent applications
 #include "Silent/Application.h"
 
+// Platforms / Renderers
+#include "Silent/Platform/LPlatformSDL.h"
+#include "Silent/Renderer/LRendererGL3.h"
+
+// Resources
 #include "Silent/Resource/Resources.h"
 #include "Silent/Resource/RShader.h"
 #include "Silent/Resource/RMesh.h"
@@ -21,24 +22,24 @@
  * The Entity - Module - System Layering is as so (top to bottom):
  * Systems.h
  * System.h
- * Entities.h
- * Modules.h
+ * LEntity.h
+ * LModule.h
  * Module.h
  * Entity.h
  */
-#include "Silent/Entity/Entities.h"
-#include "Silent/Module/Modules.h"
-//#include "Silent/Module/Modules.cpp"
+#include "Silent/Entity/LEntity.h"
+#include "Silent/Module/LModule.h"
+//#include "Silent/Module/LModule.cpp"
 #include "Silent/Interface/Interface.h"
 //#include "Silent/Interface/Interface.cpp"
 
-#include "Silent/System/Systems.h"
-#include "Silent/System/SSetting.h"
-#include "Silent/System/SInput.h"
-#include "Silent/System/SCamera.h"
-#include "Silent/System/SLight.h"
-#include "Silent/System/SDebug.h"
-#include "Silent/System/SRender.h"
+//#include "Silent/System/Systems.h"
+//#include "Silent/System/SSetting.h"
+//#include "Silent/System/SInput.h"
+//#include "Silent/System/SCamera.h"
+//#include "Silent/System/SLight.h"
+//#include "Silent/System/SDebug.h"
+//#include "Silent/System/SRender.h"
 
 
 //-----------Entry Point-----------

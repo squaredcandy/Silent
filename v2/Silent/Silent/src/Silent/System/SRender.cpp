@@ -55,7 +55,7 @@ namespace Silent
 			while (splitIdx * MaxBatchSize<glm::mat4>() < totalSize)
 			{
 				// Split the vector into smaller sizes
-				const auto batchSize = MaxBatchSize<glm::mat4>();
+				constexpr auto batchSize = MaxBatchSize<glm::mat4>();
 				auto currentSplitSize = splitIdx * batchSize;
 				auto nextSplitSize = (splitIdx + 1) * batchSize;
 				std::vector<glm::mat4> sub (model.begin() + currentSplitSize, 

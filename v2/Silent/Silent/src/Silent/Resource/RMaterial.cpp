@@ -8,8 +8,7 @@ namespace Silent
 		return newID++;
 	}
 
-	RMaterial::RMaterial(std::string name) 
-		: _materialID(GenerateMaterialID())
+	RMaterial::RMaterial(std::string name) : Resource(name), _materialID(GenerateMaterialID())
 	{
 
 	}
@@ -22,14 +21,12 @@ namespace Silent
 		uniformParams.clear();
 	}
 
-	void RMaterial::AddTexture(int idx, 
-									   std::shared_ptr<RTexture> texture)
+	void RMaterial::AddTexture(int idx, std::shared_ptr<RTexture> texture)
 	{
 		_textures[idx] = texture;
 	}
 
-	void RMaterial::AddParameter(const std::string& name, 
-										 const std::any& val)
+	void RMaterial::AddParameter(const std::string& name, const std::any& val)
 	{
 		uniformParams[name] = val;
 	}

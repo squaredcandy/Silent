@@ -12,6 +12,9 @@
 
 #pragma warning(disable: 4251)
 
+#define BIND_1(x) std::bind(&x, this, std::placeholders::_1)
+#define BIND_2(x) std::bind(&x, this, std::placeholders::_1, std::placeholders::_2)
+
 // This is where we define the folders
 #define DATA_FOLDER "Data/"
 #define MESH_FOLDER DATA_FOLDER "Meshes/"
@@ -27,6 +30,20 @@
 #define SL_NOTIFY_QUIT			0x00020001
 
 // 0x0003 reserved for platforms
+#define SL_PLATFORM_NONE		0x00030000
+#define SL_PLATFORM_SDL			0x00030001
+
+// 0x0004 reserved for renderers
+#define SL_RENDERER_NONE		0x00040000
+#define SL_RENDERER_GL3			0x00040001
+#define SL_RENDERER_VLK			0x00040002
+
+// #define SL_ASSERT_ENABLED
+// #ifdef SL_ASSERT_ENABLED
+// 	#define SL_ASSERT(x, ...) { if(!(x)) {SL_ERROR("Assertion Failed")}}
+// #else
+// 
+// #endif
 
 // Our own key codes
 typedef enum
@@ -137,5 +154,3 @@ typedef enum
 
 	SL_NUM_SCANCODES = 512
 } SL_Key;
-
-// 0x0004 reserved for renderers

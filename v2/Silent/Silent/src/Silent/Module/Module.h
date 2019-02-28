@@ -16,6 +16,7 @@ namespace Silent
 	inline ModuleID GenerateModuleTypeID()
 	{
 		static ModuleID id = 1;
+		assert(id < MAX_COMPONENTS);
 		return id++;
 	}
 
@@ -32,10 +33,10 @@ namespace Silent
 	class SILENT_API Module
 	{
 	public:
-		//// The module type
-		//ModuleID _moduleID;
+		// The module type
+		ModuleID _moduleID;
 		// The entity that owns this
-		std::shared_ptr<Entity> _entity;
+		EntityID _entityID;
 		bool _active = true;
 
 	public:
@@ -44,11 +45,11 @@ namespace Silent
 
 		bool operator==(const Module& other) const
 		{
-			return _entity == other._entity;
+			return _entityID == other._entityID;
 		}
 		bool operator<(const Module& other) const
 		{
-			return _entity < other._entity;
+			return _entityID < other._entityID;
 		}
 	};
 
@@ -59,8 +60,6 @@ namespace Silent
 		// This is copied over from the common module stuff
 		// Entity Name
 		std::string _name;
-		// Parent ID
-		std::shared_ptr<Entity> _parent;
 
 		// Model Vectors
 		glm::vec3 _translate;
@@ -74,11 +73,12 @@ namespace Silent
 
 		glm::mat4 _modelMatrix;
 		// Check if we need to update the matrix data in the renderer
-		bool _matrixUpdated;
+		bool _matrixUpdated = false;
 
 	public:
 		const std::string& name;
-		const std::shared_ptr<Entity>& parent;
+		// Parent ID
+		Entity * _parent;
 
 		const glm::vec3& translation;
 		const glm::vec3& rotation;
@@ -89,14 +89,14 @@ namespace Silent
 		const glm::vec3& upVector;
 
 		const glm::mat4& modelMatrix;
-		const bool matrixUpdated;
+		const bool& matrixUpdated;
 
-		MTransform(std::string name = "", 
-						 std::shared_ptr<Entity> parent = nullptr,
-						 glm::vec3 translation = glm::vec3(), 
-						 glm::vec3 rotation = glm::vec3(),
-						 glm::vec3 scale = glm::vec3(1)) :
-			_name(name), _parent(parent), name(_name), parent(_parent),
+		MTransform(std::string name = "",
+				   Entity * parent = nullptr,
+				   glm::vec3 translation = glm::vec3(),
+				   glm::vec3 rotation = glm::vec3(),
+				   glm::vec3 scale = glm::vec3(1)) :
+			_name(name), _parent(parent), name(_name),
 			_translate(translation), _rotate(rotation), _scale(scale),
 			translation(_translate), rotation(_rotate), scale(_scale),
 			forwardVector(_forwardVector), rightVector(_rightVector),
@@ -184,7 +184,7 @@ namespace Silent
 	{
 	protected:
 	public:
-		LightType lightType;
+		LightType lightType = PointLight;
 		glm::vec3 lightColor;
 		float size;
 		float falloffPower;

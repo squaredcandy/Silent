@@ -2,20 +2,20 @@
 
 #include "../Core.h"
 #include "Resource.h"
-#include "../Renderer/Renderer.h"
+#include "../Renderer/LRenderer.h"
 
 namespace Silent
 {
 	class SILENT_API RShader : public Resource
 	{
 	protected:
-		bool _initialized;
+		bool _initialized = false;
 		ShaderID _shaderID;
 
-		Renderer * _renderer;
+		LRenderer * _renderer;
 	public:
 		RShader(std::string name = "");
-		RShader(std::string name, Renderer * renderer,
+		RShader(std::string name, LRenderer * renderer,
 						bool useVert = true, bool useFrag = true,
 						bool useGeom = false, bool useTess = false,
 						bool useComp = false);
@@ -25,7 +25,7 @@ namespace Silent
 		inline void SetUniform(const std::string& name, const std::any& val);
 
 		ShaderID GetShaderID() const;
-		Renderer * GetRenderer() const;
+		LRenderer * GetRenderer() const;
 		
 		void Cleanup() override;
 	};

@@ -7,7 +7,7 @@ namespace Silent
 	RShader::RShader(std::string name)
 		: Resource(), _shaderID(0u) {}
 
-	RShader::RShader(std::string name, Renderer * renderer,
+	RShader::RShader(std::string name, LRenderer * renderer,
 									 bool useVert, bool useFrag,
 									 bool useGeom, bool useTess,
 									 bool useComp) : Resource()
@@ -32,7 +32,7 @@ namespace Silent
 		_renderer->SetUniform(_shaderID, name, val);
 	}
 
-	Silent::ShaderID RShader::GetShaderID() const
+	ShaderID RShader::GetShaderID() const
 	{
 		return _shaderID;
 	}
@@ -42,7 +42,7 @@ namespace Silent
 
 	}
 
-	Silent::Renderer * RShader::GetRenderer() const
+	LRenderer * RShader::GetRenderer() const
 	{ 
 		return _renderer; 
 	}

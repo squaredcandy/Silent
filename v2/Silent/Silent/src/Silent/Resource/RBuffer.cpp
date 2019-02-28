@@ -2,19 +2,11 @@
 
 namespace Silent
 {
-	RBuffer::RBuffer(std::string name)
+	RBuffer::RBuffer(std::string name, LRenderer * renderer, int msaa, 
+					 bool frame, bool color, bool depth) :
+		Resource(name), _renderer(renderer), _MSAALevel(msaa), 
+		useFrame(frame), useColor(color), useDepth(depth)
 	{
-
-	}
-
-	RBuffer::RBuffer(std::string name, Renderer * renderer,
-									 bool useFramebuffer,  bool useColorbuffer, 
-									 bool useDepthbuffer) : _renderer(renderer),
-		useFrame(useFramebuffer), useColor(useColorbuffer), 
-		useDepth(useDepthbuffer)
-	{
-		_bufferID = _renderer->CreateBuffer(_MSAALevel, useFramebuffer,
-										   useColorbuffer, useDepthbuffer);
 	}
 
 	int RBuffer::GetMultisampleLevel() const
@@ -29,34 +21,33 @@ namespace Silent
 
 	void RBuffer::BindColorbuffer()
 	{
-		_renderer->BindColorbufferToFramebuffer(_bufferID);
+		_renderer->BindColorbuffer(_bufferID);
 	}
 
 	void RBuffer::BindDepthbuffer()
 	{
-		_renderer->BindDepthbufferToFramebuffer(_bufferID);
+		_renderer->BindDepthbuffer(_bufferID);
 	}
 
 	void RBuffer::Begin()
 	{
 		if(useColor) BindColorbuffer();
 		if(useDepth) BindDepthbuffer();
-		_renderer->BeginFramebufferDrawing(_bufferID);
+		_renderer->BindFramebuffer(_bufferID);
 	}
 
 	void RBuffer::End()
 	{
-		// we need something here so that it doesnt push an image to imgui
-		auto pos = ImGui::GetWindowPos();
-		auto size = ImGui::GetWindowSize();
+		_renderer->UnbindFramebuffer(_bufferID);
+	}
 
-		_renderer->EndFramebufferDrawing(_bufferID, size.x, size.y, 
-										 pos.x, pos.y);
+	void RBuffer::Load()
+	{
+		_bufferID = _renderer->CreateBuffer(_MSAALevel, useFrame, useColor, useDepth);
 	}
 
 	void RBuffer::Cleanup()
 	{
 
 	}
-
 }

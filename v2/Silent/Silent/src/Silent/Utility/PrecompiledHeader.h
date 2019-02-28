@@ -1,5 +1,7 @@
 #pragma once
-
+#ifdef _DEBUG
+#define _CRTDBG_MAP_ALLOC 
+#endif
 #include <iostream>
 #include <algorithm>
 #include <functional>

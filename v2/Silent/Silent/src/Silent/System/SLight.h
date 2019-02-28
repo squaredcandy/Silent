@@ -28,7 +28,7 @@ namespace Silent
 		void UpdateLights();
 
 	public:
-		SCamera * _cameraSystem;
+		SCamera * _cameraSystem = nullptr;
 
 		SLight(SystemPriority priority = 20)
 			: System("Lights", priority) {}

@@ -6,12 +6,12 @@ namespace Silent
 {
 	// So the idea of this class provide a framework where we can just 
 	// add derivatives of this class to a vector 
-	class Stack
+	class SILENT_API Layer
 	{
 	public:
 		bool active = true;
-		Stack() = default;
-		virtual ~Stack() = default;
+		Layer() = default;
+		virtual ~Layer() = default;
 
 		virtual void OnInitialize() = 0;
 		virtual void OnUpdate() = 0;

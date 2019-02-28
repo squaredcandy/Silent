@@ -3,14 +3,14 @@
 #include "../Core.h"
 #include "Resource.h"
 
-#include "../Renderer/Renderer.h"
+#include "../Renderer/LRenderer.h"
 
 namespace Silent
 {
 	class SILENT_API RBuffer : public Resource
 	{
 	protected:
-		Renderer * _renderer;
+		LRenderer * _renderer;
 		BufferID _bufferID;
 		int _MSAALevel = 1;
 
@@ -22,10 +22,8 @@ namespace Silent
 		void BindDepthbuffer();
 
 	public:
-		RBuffer(std::string name = "");
-		RBuffer(std::string name, Renderer * renderer,
-						bool useFramebuffer = true,  bool useColorbuffer = true, 
-						bool useDepthbuffer = true);
+		RBuffer(std::string name = "", LRenderer * renderer = nullptr, int msaa = 1,
+				bool frame = true, bool color= true, bool depth = true);
 
 		int GetMultisampleLevel() const;
 		BufferID GetBufferID() const;
@@ -33,6 +31,9 @@ namespace Silent
 		void Begin();
 		void End();
 
-		void Cleanup() override;
+		inline void Load() override;
+		inline void Cleanup() override;
+
+
 	};
 }

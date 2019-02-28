@@ -8,7 +8,7 @@ namespace Silent
 
 	}
 
-	RTexture::RTexture(std::string name, Renderer * renderer)
+	RTexture::RTexture(std::string name, LRenderer * renderer)
 		: Resource()
 	{
 		_textureID = renderer->LoadTexture2D(name);

@@ -13,7 +13,6 @@ namespace Silent
 {
 	namespace fs = std::filesystem;
 
-	// This class is meant to be used with a singleton
 	class SILENT_API Resources
 	{
 	private:
@@ -30,7 +29,7 @@ namespace Silent
 				return std::dynamic_pointer_cast<T>(resources[str]);
 			}
 
-			std::cout << "No Resource of type " << typeid(T).name()
+			std::cout << "No Resource of type " << typeid(T).name() 
 				<< " named " << str << "found\n";
 			return nullptr;
 		}

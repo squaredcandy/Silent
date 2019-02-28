@@ -38,8 +38,8 @@ namespace Silent
 		int totalObjectsRendered = 0;
 
 	public:
-		SLight * _lightSystem;
-		SCamera * _cameraSystem;
+		SLight * _lightSystem = nullptr;
+		SCamera * _cameraSystem = nullptr;
 
 		SRender(SystemPriority priority = 1000) : 
 			System("Renderer", priority) {}
